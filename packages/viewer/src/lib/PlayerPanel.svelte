@@ -4,6 +4,7 @@
 	import type { ViewerStore } from "./store.svelte";
 	import GemChip from "./GemChip.svelte";
 	import Card from "./Card.svelte";
+	import CardBack from "./CardBack.svelte";
 
 	interface Props {
 		state: GameState;
@@ -60,27 +61,28 @@
 		{#each bonusList as b (b.color)}
 			<GemChip color={b.color} count={b.n} size="mini" />
 		{/each}
-		{#if player.reserved.length > 0}
-			<span class="reserved" title="{player.reserved.length} reserved">
-				▤ {player.reserved.length}
-			</span>
-		{/if}
 		{#if player.nobles.length > 0}
 			<span class="nobles" title="nobles">♛ {player.nobles.length}</span>
 		{/if}
 	</div>
 
-	{#if isMe && player.reserved.length > 0}
+	{#if player.reserved.length > 0}
 		<div class="row my-reserved">
-			{#each player.reserved as cardId (cardId)}
-				<Card
-					{cardId}
-					mini
-					affordable={store.myTurn && store.affordable(cardId)}
-					selectable={store.myTurn && store.affordable(cardId)}
-					onclick={() => store.clickCard(cardId, "reserved")}
-				/>
-			{/each}
+			{#if isMe}
+				{#each player.reserved as cardId (cardId)}
+					<Card
+						{cardId}
+						mini
+						affordable={store.myTurn && store.affordable(cardId)}
+						selectable={store.myTurn && store.affordable(cardId)}
+						onclick={() => store.clickCard(cardId, "reserved")}
+					/>
+				{/each}
+			{:else}
+				{#each player.reserved as cardId, i (i)}
+					<CardBack />
+				{/each}
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -174,7 +176,6 @@
 		color: var(--text-dim);
 		font-size: 11px;
 	}
-	.reserved,
 	.nobles {
 		font-size: 11px;
 		color: var(--text-dim);
