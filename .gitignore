@@ -4,3 +4,4 @@ dist
 *.local
 .vite
 dist-test
+.pnpm-store
