@@ -9,7 +9,7 @@
   const lines = $derived(store.logLines);
   const compact = $derived(store.preferences.compactCards === true);
   const showFeed = $derived(store.preferences.logFeed !== false);
-  const recent = $derived(lines.slice(-8));
+  const recent = $derived(lines.map((line, index) => ({ line, index })).slice(-8).reverse());
 </script>
 
 <div class="side">
@@ -26,8 +26,8 @@
 
   {#if showFeed}
     <div class="feed">
-      {#each recent as line, i (lines.length - recent.length + i)}
-        <div class="entry">{line}</div>
+      {#each recent as item (item.index)}
+        <div class="entry" class:latest={item.index === lines.length - 1}>{item.line}</div>
       {/each}
       {#if recent.length === 0}
         <div class="entry dim">No events yet</div>
@@ -76,5 +76,6 @@
     padding-bottom: 3px;
   }
   .entry:last-child { border-bottom: none; }
+  .entry.latest { color: var(--gold); font-weight: 600; }
   .entry.dim { color: var(--text-dim); }
 </style>
