@@ -18,8 +18,10 @@ Two packages: `packages/engine` (`splendor-engine`, rules + BGS wrapper) and `pa
   (engine `tsc --noEmit`, viewer `svelte-check`) with zero errors.
 - **No comments by default** — write self-explanatory code; comment only the non-obvious "why"
   (e.g. a BGS contract quirk, a rules edge case). No emojis in code or docs.
-- **Formatting**: 2-space indent, 120-column lines. No eslint/prettier configs in this repo —
-  just stay consistent.
+- **Formatting**: oxfmt (`.oxfmtrc.json`) — **tabs** for indentation (tabWidth 2),
+  120-column lines, Svelte formatting enabled. Run `pnpm fmt` to format, `pnpm fmt:check`
+  in CI. Linting: oxlint (`.oxlintrc.json`) with `curly: all` — always brace `if`/`for`/
+  `while` bodies. Run `pnpm lint`.
 - **Tests**: colocated `*.spec.ts` next to engine sources, run with `node --test` against
   compiled output (`pnpm --filter splendor-engine test` compiles to `dist-test/` first).
   Use `node:assert/strict`.
@@ -60,10 +62,12 @@ Two packages: `packages/engine` (`splendor-engine`, rules + BGS wrapper) and `pa
 ```bash
 pnpm install
 pnpm dev      # viewer dev server + mock backend harness
+pnpm fmt      # oxfmt format (tabs, 120 cols)
+pnpm lint     # oxlint (curly rule)
 pnpm tsc      # engine tsc + viewer svelte-check
 pnpm test     # engine tests
 pnpm build    # engine dist/ + viewer dist/ (iife + css)
-pnpm check    # tsc + test + build
+pnpm check    # fmt:check + lint + tsc + test + build
 ```
 
 Run `pnpm check` before committing. Commit with clear messages; do not create PRs
