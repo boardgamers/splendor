@@ -11,6 +11,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
+		"prepublishOnly": "pnpm build",
 		"tsc": "svelte-check --tsconfig ./tsconfig.json",
 		"preview": "vite preview"
 	},

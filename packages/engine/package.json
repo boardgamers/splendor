@@ -26,6 +26,7 @@
 	},
 	"scripts": {
 		"build": "tsc -p tsconfig.build.json",
+		"prepublishOnly": "pnpm build",
 		"tsc": "tsc --noEmit",
 		"test": "tsc -p tsconfig.test.json && node --test \"dist-test/src/*.spec.js\""
 	},
