@@ -142,6 +142,21 @@ export class ViewerStore {
     return this.playerIndex !== undefined ? this.tokensOf(this.playerIndex) : 0;
   }
 
+  get canAffordSomething(): boolean {
+    const s = this.liveState;
+    if (!s || !this.myTurn) return false;
+    for (const row of s.table) for (const id of row) if (this.affordable(id)) return true;
+    const me = this.playerIndex !== undefined ? s.players[this.playerIndex] : undefined;
+    for (const id of me?.reserved ?? []) if (this.affordable(id)) return true;
+    return false;
+  }
+
+  get bankActive(): boolean {
+    const s = this.liveState;
+    if (!s || !this.myTurn) return false;
+    return GEM_COLORS.some((c) => this.gemEnabled(c));
+  }
+
   get takeDraft(): Move | null {
     const pick = this.gemPick;
     if (pick.length === 2 && pick[0] !== undefined && pick[0] === pick[1]) return { action: "take2", color: pick[0] };
@@ -173,11 +188,12 @@ export class ViewerStore {
     const s = this.liveState;
     if (!s) return "";
     const pick = this.gemPick;
-    if (this.myTokens >= 10) return "You already hold 10 gems — buy or reserve first";
+    if (this.myTokens >= 10) return "You already hold 10 gems — buy a card or reserve one";
     if (pick.length === 0) {
-      if (this.myTokens + 3 <= 10) return "Pick 3 different gems, or the same gem twice (bank needs ≥ 4)";
-      if (this.myTokens + 2 <= 10) return "Pick the same gem twice (bank needs ≥ 4) — you may hold at most 10 gems";
-      return "You may hold at most 10 gems — buy or reserve first";
+      const buyTip = this.canAffordSomething ? " — or buy a glowing card" : "";
+      if (this.myTokens + 3 <= 10) return `Pick 3 different gems, or the same gem twice (bank needs ≥ 4)${buyTip}`;
+      if (this.myTokens + 2 <= 10) return `Pick the same gem twice (bank needs ≥ 4) — you may hold at most 10 gems${buyTip}`;
+      return `You may hold at most 10 gems — buy a card or reserve one${buyTip}`;
     }
     if (pick.length === 1) {
       return this.myTokens + 3 <= 10

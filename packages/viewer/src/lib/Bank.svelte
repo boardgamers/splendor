@@ -11,7 +11,8 @@
   let { state, store }: Props = $props();
 </script>
 
-<div class="bank" class:reserving={store.reserving}>
+<div class="bank" class:active={store.bankActive && !store.reserving} class:reserving={store.reserving}>
+  <span class="bank-label">Bank</span>
   {#each GEM_COLORS as color (color)}
     {@const count = state.bank[color]}
     {@const enabled = store.gemEnabled(color)}
@@ -43,5 +44,23 @@
     background: var(--bg-panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .bank.active {
+    border-color: color-mix(in srgb, var(--gold) 55%, var(--line));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 16px rgba(212, 175, 55, 0.12);
+  }
+  .bank.active .bank-label { color: var(--gold); }
+  .bank.reserving {
+    border-color: var(--gold);
+  }
+  .bank-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 2px;
+    transition: color 0.2s ease;
   }
 </style>

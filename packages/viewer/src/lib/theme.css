@@ -96,11 +96,18 @@ button:disabled {
 
 .chip.clickable {
   cursor: pointer;
+  animation: chipPulse 2s ease-in-out infinite;
 }
 
 .chip.clickable:hover {
   transform: translateY(-3px) scale(1.08);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  animation: none;
+}
+
+@keyframes chipPulse {
+  0%, 100% { box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45); }
+  50% { box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45), 0 0 8px 2px rgba(212, 175, 55, 0.45); }
 }
 
 .chip.selected {
