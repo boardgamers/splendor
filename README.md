@@ -96,9 +96,15 @@ Two pieces are registered in the BGS admin panel (see "New Boardgame"):
   turns. Most prestige wins; ties broken by fewest purchased cards; full ties are a shared victory.
 - Determinism: all shuffles use a seeded PRNG (`seedrandom`), so a seed + the move log fully
   reproduce a game (`replay`).
-- Hidden information: the face-down decks and other players' reserved cards are stripped by
-  `stripSecret` (replaced by `-1` placeholders preserving counts); a player sees their own reserved
-  cards, spectators see none.
+- Hidden information: the face-down decks are always stripped by `stripSecret`. Reserved cards are
+  provenance-tracked: a card reserved **from the table** is public info and shown face-up to
+  everyone, while a card reserved **blind from a deck** is secret and stripped (shown as a `-1`
+  placeholder preserving the count). A player always sees all their own reserved cards.
+- Game setup option **`hideReserved`** (boolean): when `true`, all opponents' reserved cards are
+  hidden regardless of provenance (strict mode, like the official app). Default off. This is a BGS
+  game option: register it in the gameinfo doc's `options` array as
+  `{ "name": "hideReserved", "label": "Hide reserved cards from other players", "type": "checkbox", "items": null }`
+  — BGS passes it flat into `init(players, expansions, options, seed)` when the host checks it.
 
 ## Status / TODO
 
@@ -108,4 +114,5 @@ harness verified in a real browser (move loop + bots work).
 
 Next iterations: replay-mode polish (`replay:info` wiring is basic), avatars/preferences UI,
 `fetchLog` usage for incremental logs, sounds (intentionally skipped), publish both packages to
-npm and register the game in the BGS admin panel.
+npm and register the game in the BGS admin panel. When registering, declare the `hideReserved`
+checkbox option (see the rules section above) in the gameinfo doc's `options` array.
