@@ -28,9 +28,15 @@
 		justify-content: center;
 		user-select: none;
 	}
-	.cardback.tier-1 { background: linear-gradient(150deg, #3d5a43, #2c4231); }
-	.cardback.tier-2 { background: linear-gradient(150deg, #6d5a2c, #4f411f); }
-	.cardback.tier-3 { background: linear-gradient(150deg, #5d3a4e, #452b39); }
+	.cardback.tier-1 {
+		background: linear-gradient(150deg, #3d5a43, #2c4231);
+	}
+	.cardback.tier-2 {
+		background: linear-gradient(150deg, #6d5a2c, #4f411f);
+	}
+	.cardback.tier-3 {
+		background: linear-gradient(150deg, #5d3a4e, #452b39);
+	}
 	.roman {
 		font-size: 15px;
 		font-weight: 800;

@@ -5,6 +5,7 @@ export interface DevOptions {
 	players?: number;
 	seed?: string;
 	delayMs?: number;
+	hideReserved?: boolean;
 }
 
 const NAMES = ["You", "Ada (bot)", "Cleo (bot)", "Dora (bot)"];
@@ -52,7 +53,7 @@ export function startDevBackend(
 	const seed = options.seed ?? `dev-${Math.floor(Math.random() * 1e6)}`;
 	const delay = options.delayMs ?? 700;
 
-	let state: GameState = setup(playerCount, {}, seed);
+	let state: GameState = setup(playerCount, options.hideReserved ? { hideReserved: true } : {}, seed);
 	for (let i = 0; i < playerCount; i++) {
 		state.players[i]!.name = NAMES[i] ?? `Player ${i + 1}`;
 	}

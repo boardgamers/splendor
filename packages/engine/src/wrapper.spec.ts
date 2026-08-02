@@ -74,15 +74,34 @@ describe("wrapper", () => {
 			Array.from({ length: 35 + 25 + 16 }, () => -1)
 		);
 		assert.deepEqual(forZero.players[0]?.reserved, state.players[0]?.reserved, "own reserved cards stay visible");
-		assert.deepEqual(forZero.players[1]?.reserved, [-1], "opponent reserved cards become face-down");
+		assert.deepEqual(forZero.players[1]?.reserved, [-1], "opponent's deck-reserved card is hidden");
 		assert.equal(forZero.players[1]?.reserved.length, 1, "the count is preserved");
 
+		// player 0 reserved from the table -> public info, visible to the opponent.
+		const forOne = stripSecret(state, 1) as GameState;
+		assert.deepEqual(forOne.players[0]?.reserved, state.players[0]?.reserved, "table-reserved card is public");
+
 		const spectator = stripSecret(state) as GameState;
-		assert.deepEqual(spectator.players[0]?.reserved, [-1]);
-		assert.deepEqual(spectator.players[1]?.reserved, [-1]);
+		assert.deepEqual(
+			spectator.players[0]?.reserved,
+			state.players[0]?.reserved,
+			"table-reserved visible to spectators"
+		);
+		assert.deepEqual(spectator.players[1]?.reserved, [-1], "deck-reserved hidden from spectators");
 
 		const negative = stripSecret(state, -1) as GameState;
-		assert.deepEqual(negative.players[0]?.reserved, [-1]);
+		assert.deepEqual(negative.players[1]?.reserved, [-1]);
+	});
+
+	it("hideReserved option hides all opponents' reserved cards", async () => {
+		let state = await init(2, [], {}, "prov-hide");
+		state = await move(state, { action: "reserve", cardId: state.table[0][0]! }, 0);
+
+		// even a table-reserved card is hidden when the option is on
+		state.options = { hideReserved: true };
+		const forOne = stripSecret(state, 1) as GameState;
+		assert.deepEqual(forOne.players[0]?.reserved, [-1], "hideReserved hides table-reserved too");
+		assert.deepEqual(forOne.players[0]?.reservedFrom, state.players[0]?.reservedFrom, "provenance is preserved");
 	});
 
 	it("logSlice returns slices and availableMoves only without end", async () => {

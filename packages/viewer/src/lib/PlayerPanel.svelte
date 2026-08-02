@@ -68,21 +68,21 @@
 
 	{#if player.reserved.length > 0}
 		<div class="row my-reserved">
-			{#if isMe}
-				{#each player.reserved as cardId (cardId)}
+			{#each player.reserved as cardId, i (cardId + ":" + i)}
+				{#if cardId >= 0}
+					<!-- visible: own cards, or opponents' table-reserved cards (public info) -->
 					<Card
 						{cardId}
 						mini
-						affordable={store.myTurn && store.affordable(cardId)}
-						selectable={store.myTurn && store.affordable(cardId)}
-						onclick={() => store.clickCard(cardId, "reserved")}
+						affordable={isMe && store.myTurn && store.affordable(cardId)}
+						selectable={isMe && store.myTurn && store.affordable(cardId)}
+						onclick={isMe ? () => store.clickCard(cardId, "reserved") : undefined}
 					/>
-				{/each}
-			{:else}
-				{#each player.reserved as cardId, i (i)}
+				{:else}
+					<!-- -1: a deck-reserved (secret) card -->
 					<CardBack />
-				{/each}
-			{/if}
+				{/if}
+			{/each}
 		</div>
 	{/if}
 </div>

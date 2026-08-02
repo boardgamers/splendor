@@ -28,9 +28,9 @@
 	<GemChip
 		color="gold"
 		count={state.bank.gold}
-		clickable={store.myTurn && store.pendingNobleChoice.length === 0}
+		clickable={store.myTurn && store.pendingNobleChoice.length === 0 && store.canReserveAtAll()}
 		selected={store.reserving}
-		dimmed={state.bank.gold === 0}
+		dimmed={state.bank.gold === 0 || !(store.myTurn && store.canReserveAtAll())}
 		onclick={() => store.toggleReserve()}
 	/>
 </div>

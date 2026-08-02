@@ -299,7 +299,7 @@ export class ViewerStore {
 	}
 
 	toggleReserve(): void {
-		if (!this.myTurn) {
+		if (!this.myTurn || !this.canReserveAtAll()) {
 			return;
 		}
 		this.reserving = !this.reserving;

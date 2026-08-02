@@ -26,7 +26,13 @@
 			</div>
 		{:else if store.reserving}
 			<div class="flow">
-				<span class="hint gold-hint">Reserving: click a card or a deck to reserve it (+1 gold if available).</span>
+				{#if store.canReserveAtAll()}
+					<span class="hint gold-hint">Reserving: click a card or a deck to reserve it (+1 gold if available).</span>
+				{:else}
+					<span class="hint warn"
+						>You can't reserve — you already hold 3 reserved cards or 10 gems. Buy a card first.</span
+					>
+				{/if}
 				<button class="cancel" onclick={() => store.cancel()}>Cancel</button>
 			</div>
 		{:else}
@@ -74,6 +80,9 @@
 	}
 	.gold-hint {
 		color: var(--gold);
+	}
+	.warn {
+		color: var(--ruby);
 	}
 	.picked {
 		display: flex;

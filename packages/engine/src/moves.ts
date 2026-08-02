@@ -98,6 +98,7 @@ function doReserve(state: GameState, player: PlayerState, move: Extract<Move, { 
 		fail(`you may hold at most ${MAX_TOKENS} gems`);
 	}
 	let cardId: number;
+	let from: "table" | "deck" = "table";
 	if (move.cardId !== undefined) {
 		const spot = findTableCard(state, move.cardId);
 		if (!spot) {
@@ -111,10 +112,12 @@ function doReserve(state: GameState, player: PlayerState, move: Extract<Move, { 
 			fail(`tier ${move.tier} deck is empty`);
 		}
 		cardId = (state.decks[move.tier - 1] as number[]).shift() as number;
+		from = "deck";
 	} else {
 		fail("reserve needs a cardId (from the table) or a tier (from a deck)");
 	}
 	player.reserved.push(cardId);
+	player.reservedFrom.push(from);
 	if (state.bank.gold > 0) {
 		state.bank.gold--;
 		player.tokens.gold++;
@@ -147,6 +150,7 @@ function doBuy(state: GameState, player: PlayerState, move: Extract<Move, { acti
 		drawReplacement(state, spot.tier);
 	} else {
 		player.reserved.splice(reservedIndex, 1);
+		player.reservedFrom.splice(reservedIndex, 1);
 	}
 	player.cards.push(card.id);
 }

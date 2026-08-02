@@ -37,6 +37,7 @@ export function setup(playerCount: number, options: Record<string, unknown>, see
 		tokens: emptyTokens(),
 		cards: [],
 		reserved: [],
+		reservedFrom: [],
 		nobles: [],
 		dropped: false,
 	}));

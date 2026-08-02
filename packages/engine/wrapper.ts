@@ -54,10 +54,20 @@ export interface StripOptions {
 
 export function stripSecret(data: GameState, player?: number): GameState {
 	const viewer = player !== undefined && player >= 0 ? player : undefined;
+	// hideReserved option: when true, all opponents' reserved cards are hidden (strict mode).
+	// Default: cards reserved from the table are public, only deck-reserved (blind) ones are secret.
+	const hideAll = data.options?.hideReserved === true;
 	return {
 		...data,
 		decks: data.decks.map((deck) => deck.map(() => -1)) as GameState["decks"],
-		players: data.players.map((p, i) => (i === viewer ? p : { ...p, reserved: p.reserved.map(() => -1) })),
+		players: data.players.map((p, i) =>
+			i === viewer
+				? p
+				: {
+						...p,
+						reserved: p.reserved.map((id, j) => (hideAll || p.reservedFrom[j] === "deck" ? -1 : id)),
+					}
+		),
 		messages: [...data.messages],
 	};
 }

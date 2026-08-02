@@ -28,6 +28,8 @@ export interface PlayerState {
 	tokens: Record<TokenColor, number>;
 	cards: number[];
 	reserved: number[];
+	// provenance[i] = where reserved[i] came from: "table" (public) or "deck" (secret).
+	reservedFrom: ("table" | "deck")[];
 	nobles: number[];
 	dropped: boolean;
 }

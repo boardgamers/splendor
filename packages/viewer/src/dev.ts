@@ -4,9 +4,10 @@ import { launch } from "./viewer";
 const params = new URLSearchParams(window.location.search);
 const players = Math.min(4, Math.max(2, Number(params.get("players") ?? 2)));
 const seed = params.get("seed") ?? undefined;
+const hideReserved = params.get("hideReserved") === "1" || params.get("hideReserved") === "true";
 
 const emitter = launch("#app");
-startDevBackend(emitter as never, { players, seed });
+startDevBackend(emitter as never, { players, seed, hideReserved });
 
 (window as unknown as { splendorDev?: unknown }).splendorDev = {
 	emitter,
