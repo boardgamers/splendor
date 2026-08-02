@@ -12,6 +12,8 @@ type Row = [
 ];
 
 // Published base-game card list (Space Cowboys, 2014): 40/30/20 cards in tiers 1/2/3.
+// Official rulebook: https://bghub.org/r/splendor.pdf. Transcribed from and cross-verified
+// against github.com/bouk/splendimax and github.com/seal256/splendor (identical data).
 // Cost column order: diamond(white), sapphire(blue), emerald(green), ruby(red), onyx(black).
 const CARD_ROWS: Row[] = [
 	[1, "onyx", 0, 1, 1, 1, 1, 0],

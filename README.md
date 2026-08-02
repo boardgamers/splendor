@@ -2,6 +2,15 @@
 
 An **unofficial, open-source fan implementation** of the board game **Splendor** (base game, 2–4 players, no expansions) for the [boardgamers.space](https://boardgamers.space) platform. Splendor is a trademark of Space Cowboys / Asmodee; this project is not affiliated with or endorsed by the publisher. Gem colors, card costs and noble requirements are functional game rules data reproduced for interoperability.
 
+## Rules & data sources
+
+The game rules and the card/noble data are **not** re-derived by this project — they reproduce the published base game:
+
+- **Rules**: the official rulebook ([PDF, English](https://bghub.org/r/splendor.pdf); [publisher's game page](https://www.spacecowboys-games.com/game/splendor)). The rules logic in `packages/engine/src/` implements these rules faithfully.
+- **Card & noble data** (`packages/engine/src/data.ts`): the published list of 90 development cards (40/30/20) and 10 nobles. This data was transcribed from and cross-verified against two independent open-source implementations that agree exactly — [bouk/splendimax](https://github.com/bouk/splendimax) (`Splendor Cards.csv`, `src/noble.rs`) and [seal256/splendor](https://github.com/seal256/splendor) (`assets/cards.csv`, noble constants).
+
+Gem colors, card costs, bonus colors, prestige values and noble requirements are functional game rules; they are reproduced here for interoperability and are not creative content owned by this project.
+
 ## Layout
 
 ```
