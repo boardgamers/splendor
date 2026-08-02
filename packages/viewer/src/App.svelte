@@ -7,6 +7,8 @@
   import PlayerPanel from "./lib/PlayerPanel.svelte";
   import ActionBar from "./lib/ActionBar.svelte";
   import GameEndBanner from "./lib/GameEndBanner.svelte";
+  import ReplayBar from "./lib/ReplayBar.svelte";
+  import LogFeed from "./lib/LogFeed.svelte";
 
   interface Props {
     store: ViewerStore;
@@ -27,7 +29,8 @@
 </script>
 
 {#if state}
-  <div class="board">
+  <div class="board" class:compact={store.preferences.compactCards === true}>
+    <ReplayBar {store} />
     <GameEndBanner {store} />
 
     <div class="top">
@@ -51,12 +54,12 @@
 
     {#each tierRows as row (row.tier)}
       <div class="tier-row">
-        <Deck tier={row.tier} count={row.deckCount} selectable={store.myTurn && store.tab === "reserve"} onclick={() => store.clickDeck(row.tier)} />
+        <Deck tier={row.tier} count={row.deckCount} selectable={store.myTurn && store.reserving && store.canReserveAtAll()} onclick={() => store.clickDeck(row.tier)} />
         {#each row.cards as cardId (cardId)}
           <Card
             {cardId}
             affordable={store.myTurn && store.affordable(cardId)}
-            selectable={store.myTurn && ((store.tab === "buy" && store.affordable(cardId)) || store.tab === "reserve")}
+            selectable={store.myTurn && (store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
             onclick={() => store.clickCard(cardId, "table")}
           />
         {/each}
@@ -64,6 +67,7 @@
     {/each}
 
     <ActionBar {store} />
+    <LogFeed {store} />
   </div>
 {:else}
   <div class="loading">Waiting for game state…</div>
@@ -103,6 +107,10 @@
     padding: 40px;
     text-align: center;
     color: var(--text-dim);
+  }
+  .board.compact {
+    --card-w: 68px;
+    --card-h: 94px;
   }
   @media (max-width: 900px) {
     .tier-row { gap: 8px; }

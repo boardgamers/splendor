@@ -11,19 +11,27 @@
   let { state, store }: Props = $props();
 </script>
 
-<div class="bank">
+<div class="bank" class:reserving={store.reserving}>
   {#each GEM_COLORS as color (color)}
     {@const count = state.bank[color]}
+    {@const enabled = store.gemEnabled(color)}
     <GemChip
       {color}
       {count}
-      clickable={store.myTurn && (store.tab === "take" || store.tab === "take2") && count > 0}
+      clickable={enabled}
       selected={store.gemPick.includes(color)}
-      dimmed={count === 0}
+      dimmed={!enabled}
       onclick={() => store.pickGem(color)}
     />
   {/each}
-  <GemChip color="gold" count={state.bank.gold} dimmed={state.bank.gold === 0} />
+  <GemChip
+    color="gold"
+    count={state.bank.gold}
+    clickable={store.myTurn && store.pendingNobleChoice.length === 0}
+    selected={store.reserving}
+    dimmed={state.bank.gold === 0}
+    onclick={() => store.toggleReserve()}
+  />
 </div>
 
 <style>

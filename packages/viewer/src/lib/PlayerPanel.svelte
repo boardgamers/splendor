@@ -19,6 +19,8 @@
   const isMe = $derived(store.playerIndex === index);
   const bonus = $derived(store.bonusesOf(index));
   const bonusList = $derived(GEM_COLORS.map((c) => ({ color: c, n: bonus[c] })).filter((x) => x.n > 0));
+  const avatar = $derived(store.avatars[index]);
+  const initial = $derived((player.name.trim()[0] ?? "?").toUpperCase());
 </script>
 
 <div
@@ -29,8 +31,13 @@
   style="--pc: {playerColor(index)}"
 >
   <div class="head">
-    <button class="name" onclick={() => onNameClick?.(index)} title={player.name}>
-      {player.name}
+    <button class="identity" onclick={() => onNameClick?.(index)} title={player.name}>
+      {#if avatar}
+        <img class="avatar" src={avatar} alt="" referrerpolicy="no-referrer" />
+      {:else}
+        <span class="avatar fallback" style="--pc: {playerColor(index)}">{initial}</span>
+      {/if}
+      <span class="name">{player.name}</span>
     </button>
     <span class="prestige">{store.prestigeOf(index)}</span>
   </div>
@@ -70,7 +77,7 @@
           {cardId}
           mini
           affordable={store.myTurn && store.affordable(cardId)}
-          selectable={store.myTurn && store.tab === "buy" && store.affordable(cardId)}
+          selectable={store.myTurn && store.affordable(cardId)}
           onclick={() => store.clickCard(cardId, "reserved")}
         />
       {/each}
@@ -103,17 +110,41 @@
     align-items: center;
     gap: 8px;
   }
-  .name {
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: none;
     border: none;
     padding: 0;
+    min-width: 0;
+  }
+  .identity:hover { border: none; }
+  .identity:hover .name { color: var(--gold); }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--pc);
+    flex-shrink: 0;
+  }
+  .avatar.fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--pc) 30%, var(--bg-elevated));
+    color: var(--text);
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .name {
     font-weight: 700;
     color: var(--text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .name:hover { color: var(--gold); border: none; }
   .prestige {
     font-weight: 800;
     color: var(--gold);

@@ -8,6 +8,12 @@ export interface DevOptions {
 }
 
 const NAMES = ["You", "Ada (bot)", "Cleo (bot)", "Dora (bot)"];
+const AVATARS = [
+  "",
+  "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Ada&backgroundColor=ffdfbf",
+  "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Cleo&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Dora&backgroundColor=c0aede"
+];
 
 function randomLegal(state: GameState, player: number): Move {
   const moves = availableMoves(state, player);
@@ -50,6 +56,7 @@ export function startDevBackend(emitter: { emit: (event: string, payload?: unkno
   function publish(): void {
     emitter.emit("state", stripSecret(state, human));
     emitter.emit("player", { index: human });
+    emitter.emit("avatars", AVATARS.slice(0, playerCount));
     if (state.ended && !ended) {
       ended = true;
       return;

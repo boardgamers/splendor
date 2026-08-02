@@ -68,6 +68,10 @@
   .card.affordable.selectable:hover {
     animation: glowPulse 1.2s ease-in-out infinite;
   }
+  .card.selectable:not(.affordable):hover {
+    outline: 2px dashed var(--gold-soft);
+    outline-offset: 1px;
+  }
 
   .top {
     display: flex;

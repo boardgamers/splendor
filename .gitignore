@@ -5,3 +5,4 @@ dist
 .vite
 dist-test
 .pnpm-store
+.playwright-mcp

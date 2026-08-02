@@ -67,6 +67,14 @@ export class ViewerBridge {
     this.uplink.emit("player:clicked", { index });
   }
 
+  updatePreference(name: string, value: string | boolean | null): void {
+    this.uplink.emit("update:preference", { name, value });
+  }
+
+  fetchLog(start: number, end?: number): void {
+    this.uplink.emit("fetchLog", { start, end });
+  }
+
   private send(event: string, payload: unknown): void {
     // A host inside the BGS iframe parent listens via postMessage; a local harness
     // (dev page) listens on the emitter returned by launch() — forward uplink there too.

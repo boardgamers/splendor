@@ -8,7 +8,7 @@
 
   let { store }: Props = $props();
   const pending = $derived(store.pendingNobleChoice);
-  const tokensOver = $derived(store.playerIndex !== undefined ? store.tokensOf(store.playerIndex) : 0);
+  const draft = $derived(store.takeDraft);
 </script>
 
 {#if store.myTurn}
@@ -24,49 +24,26 @@
           {/each}
         </div>
       </div>
-    {:else}
-      <div class="tabs">
-        <button class:active={store.tab === "take"} disabled={!store.canTakeAtAll()} onclick={() => store.selectTab("take")}>
-          Take 3 different
-        </button>
-        <button class:active={store.tab === "take2"} onclick={() => store.selectTab("take2")}>
-          Take 2 same
-        </button>
-        <button class:active={store.tab === "buy"} onclick={() => store.selectTab("buy")}>Buy</button>
-        <button class:active={store.tab === "reserve"} onclick={() => store.selectTab("reserve")}>Reserve</button>
-        {#if store.tab}
-          <button class="cancel" onclick={() => store.cancel()}>Cancel</button>
-        {/if}
+    {:else if store.reserving}
+      <div class="flow">
+        <span class="hint gold-hint">Reserving: click a card or a deck to reserve it (+1 gold if available).</span>
+        <button class="cancel" onclick={() => store.cancel()}>Cancel</button>
       </div>
-
-      {#if store.tab === "take"}
-        <div class="flow">
-          <span class="hint">
-            Pick 3 gems from the bank ({{ 0: "none", 1: "one", 2: "two", 3: "three" }[store.gemPick.length]} picked)
-            {#if tokensOver + 3 > 10}<span class="warn">— you may hold at most 10 gems</span>{/if}
-          </span>
+    {:else}
+      <div class="flow">
+        <span class="hint">{store.takeHint}</span>
+        {#if store.gemPick.length > 0}
           <div class="picked">
-            {#each store.gemPick as color (color)}
-              <GemChip {color} size="small" />
+            {#each store.gemPick as color, i (i)}
+              <GemChip {color} size="small" clickable={i === store.gemPick.length - 1} onclick={() => store.unpickGem()} />
             {/each}
           </div>
-          <button class="confirm" disabled={store.gemPick.length !== 3 || tokensOver + 3 > 10} onclick={() => store.confirmTake()}>
-            Confirm
+          <button class="confirm" disabled={!draft} onclick={() => store.confirmTake()}>
+            {draft ? (draft.action === "take2" ? "Take 2" : "Take 3") : "Take…"}
           </button>
-        </div>
-      {:else if store.tab === "take2"}
-        <div class="flow">
-          <span class="hint">Click a bank color with at least 4 gems.</span>
-        </div>
-      {:else if store.tab === "buy"}
-        <div class="flow">
-          <span class="hint">Click a glowing card on the board or in your reserved row to buy it.</span>
-        </div>
-      {:else if store.tab === "reserve"}
-        <div class="flow">
-          <span class="hint">Click a card or a deck to reserve it (gold joker included if available).</span>
-        </div>
-      {/if}
+          <button class="cancel" onclick={() => store.cancel()}>Clear</button>
+        {/if}
+      </div>
     {/if}
   </div>
 {/if}
@@ -81,19 +58,6 @@
     flex-direction: column;
     gap: 8px;
   }
-  .tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .tabs button.active {
-    border-color: var(--gold);
-    background: color-mix(in srgb, var(--gold) 18%, var(--bg-elevated));
-  }
-  .tabs .cancel {
-    margin-left: auto;
-    color: var(--text-dim);
-  }
   .flow {
     display: flex;
     align-items: center;
@@ -101,9 +65,10 @@
     flex-wrap: wrap;
   }
   .hint { color: var(--text-dim); }
-  .warn { color: var(--ruby); }
+  .gold-hint { color: var(--gold); }
   .picked { display: flex; gap: 5px; }
   .confirm { border-color: var(--gold); }
+  .cancel { color: var(--text-dim); }
   .noble-choice .prompt { color: var(--gold); font-weight: 600; }
   .nobles { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
   .noble-btn {
