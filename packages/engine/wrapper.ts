@@ -1,3 +1,4 @@
+import { moveAI as moveAICore } from "./src/ai.js";
 import { applyMove, dropPlayer as dropPlayerCore } from "./src/moves.js";
 import { rankings as computeRankings } from "./src/rankings.js";
 import { replay as replayCore } from "./src/replay.js";
@@ -32,6 +33,10 @@ export function rankings(data: GameState): number[] {
 
 export async function dropPlayer(data: GameState, player: number): Promise<GameState> {
 	return dropPlayerCore(data, player);
+}
+
+export async function moveAI(data: GameState, player: number): Promise<GameState> {
+	return moveAICore(data, player);
 }
 
 export function currentPlayer(data: GameState): number | number[] | undefined {

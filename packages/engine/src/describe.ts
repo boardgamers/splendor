@@ -1,5 +1,5 @@
 import { cardById, nobleById } from "./data.js";
-import { scores } from "./state.js";
+import { SWAP_MIN_TOKENS, scores } from "./state.js";
 import type { GameState, LogEntry } from "./types.js";
 
 export function describeLogEntry(state: GameState, entry: LogEntry): string {
@@ -22,6 +22,10 @@ export function describeLogEntry(state: GameState, entry: LogEntry): string {
 					const card = cardById(move.cardId);
 					return `${name(entry.player)} buys ${card.bonus} (tier ${card.tier})${card.points > 0 ? ` +${card.points}` : ""}`;
 				}
+				case "swap":
+					return move.give === move.receive
+						? `${name(entry.player)} returns ${SWAP_MIN_TOKENS} ${move.give} to the bank`
+						: `${name(entry.player)} swaps 1 ${move.give} for 1 ${move.receive}`;
 				case "noble":
 					return `${nobleById(move.nobleId).name} visits ${name(entry.player)}`;
 			}

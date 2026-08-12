@@ -129,15 +129,20 @@ describe("availableMoves", () => {
 		assert.ok(moves.every((m) => m.startsWith("noble:")));
 	});
 
-	it("hides take2 when the bank is low and take when the player is at 9+ gems", () => {
+	it("hides take2 when the bank is low and take when the player is at 8+ gems", () => {
 		const state = setup(2, {}, "moves-cap");
 		state.bank.sapphire = 3;
 		const player = state.players[0]!;
-		player.tokens = { diamond: 3, sapphire: 3, emerald: 3, ruby: 0, onyx: 0, gold: 0 };
+		player.tokens = { diamond: 3, sapphire: 3, emerald: 1, ruby: 0, onyx: 0, gold: 0 };
 		const moves = availableMoves(state, 0);
 		assert.ok(!moves.includes("take2:sapphire"));
-		assert.ok(moves.some((m) => m.startsWith("take:")));
-		player.tokens.ruby = 1;
-		assert.ok(!availableMoves(state, 0).some((m) => m.startsWith("take:")));
+		assert.ok(
+			moves.some((m) => m.startsWith("take:")),
+			"at 7 gems a full take fits"
+		);
+		player.tokens.emerald = 2;
+		assert.ok(!availableMoves(state, 0).some((m) => m.startsWith("take:")), "at 8 gems a take would exceed 10");
+		player.tokens.emerald = 3;
+		assert.ok(!availableMoves(state, 0).some((m) => m.startsWith("take2:")), "at 9 gems take2 would exceed 10");
 	});
 });

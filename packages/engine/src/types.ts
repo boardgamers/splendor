@@ -67,4 +67,5 @@ export type Move =
 	| { action: "take2"; color: GemColor }
 	| { action: "reserve"; cardId?: number; tier?: Tier }
 	| { action: "buy"; cardId: number }
-	| { action: "noble"; nobleId: number };
+	| { action: "noble"; nobleId: number }
+	| { action: "swap"; give: GemColor; receive: GemColor };

@@ -6,6 +6,10 @@ export const MAX_TOKENS = 10;
 export const MAX_RESERVED = 3;
 export const PRESTIGE_TARGET = 15;
 export const TAKE2_MIN_BANK = 4;
+// Only as a last resort: a player with no other legal move may exchange held gems
+// with the bank (1:1, or 2:1 when the gem bank is empty). Giving back more than is
+// received keeps the exchange deflationary, so games always progress.
+export const SWAP_MIN_TOKENS = 2;
 
 export function bankSize(playerCount: number): number {
 	return playerCount === 2 ? 4 : playerCount === 3 ? 5 : 7;
@@ -180,7 +184,9 @@ export function availableMoves(state: GameState, playerIndex?: number): string[]
 	const moves: string[] = [];
 	const total = tokenTotal(player);
 	const takeable = GEM_COLORS.filter((c) => state.bank[c] > 0);
-	if (total < MAX_TOKENS) {
+	// take grabs min(3, colors left in the bank) gems, take2 grabs 2: both must fit under MAX_TOKENS.
+	const takeCount = Math.min(3, takeable.length);
+	if (takeCount === 3 && total + 3 <= MAX_TOKENS) {
 		for (let a = 0; a < takeable.length; a++) {
 			for (let b = a + 1; b < takeable.length; b++) {
 				for (let c = b + 1; c < takeable.length; c++) {
@@ -188,8 +194,16 @@ export function availableMoves(state: GameState, playerIndex?: number): string[]
 				}
 			}
 		}
+	}
+	if (takeCount === 2 && total + 2 <= MAX_TOKENS) {
+		moves.push(`take:${takeable[0] as string},${takeable[1] as string}`);
+	}
+	if (takeCount === 1 && total + 1 <= MAX_TOKENS) {
+		moves.push(`take:${takeable[0] as string}`);
+	}
+	if (total + 2 <= MAX_TOKENS) {
 		for (const color of GEM_COLORS) {
-			if (state.bank[color] >= TAKE2_MIN_BANK && total + 2 <= MAX_TOKENS) {
+			if (state.bank[color] >= TAKE2_MIN_BANK) {
 				moves.push(`take2:${color}`);
 			}
 		}
@@ -218,6 +232,25 @@ export function availableMoves(state: GameState, playerIndex?: number): string[]
 			moves.push(`buy:${id}`);
 		}
 	}
+	if (moves.length === 0) {
+		const bankrupt = GEM_COLORS.every((color) => state.bank[color] <= 0);
+		for (const give of GEM_COLORS) {
+			if ((player.tokens[give] ?? 0) <= 0) {
+				continue;
+			}
+			if (bankrupt) {
+				if ((player.tokens[give] ?? 0) >= SWAP_MIN_TOKENS) {
+					moves.push(`swap:${give},${give}`);
+				}
+				continue;
+			}
+			for (const receive of GEM_COLORS) {
+				if (receive !== give && state.bank[receive] > 0) {
+					moves.push(`swap:${give},${receive}`);
+				}
+			}
+		}
+	}
 	return moves;
 }
 
@@ -232,6 +265,10 @@ export function formatMove(state: GameState, playerIndex: number, move: import("
 			return move.cardId !== undefined ? `${name} reserves a card` : `${name} reserves from deck ${move.tier}`;
 		case "buy":
 			return `${name} buys a card (+${cardById(move.cardId).points} prestige)`;
+		case "swap":
+			return move.give === move.receive
+				? `${name} returns ${SWAP_MIN_TOKENS} ${move.give} to the bank`
+				: `${name} swaps 1 ${move.give} for 1 ${move.receive}`;
 		case "noble":
 			return `${nobleById(move.nobleId).name} visits ${name}`;
 	}
