@@ -66,7 +66,8 @@ Two pieces are registered in the BGS admin panel (see "New Boardgame"):
    the entry point; `packages/engine/wrapper.ts` implements the full BGS Engine API
    (`init`, `move`, `ended`, `scores`, `rankings`, `dropPlayer`, `currentPlayer`, `logLength`,
    `logSlice`, `setPlayerMetaData`, `stripSecret`, `toSave`, `messages`, `replay`, `round`,
-   `cancelled`, `factions`).
+   `cancelled`, `factions`, `moveAI` (bot players: picks a uniformly random legal move via the
+   seeded PRNG — deterministic per game state — and applies it through the normal `move` path).
 
 2. **Viewer** — the IIFE bundle served from jsdelivr:
    - `viewer.url`: `//cdn.jsdelivr.net/npm/splendor-viewer@<version>/dist/splendor-viewer.iife.js`
@@ -88,8 +89,14 @@ Two pieces are registered in the BGS admin panel (see "New Boardgame"):
 - A turn is exactly one action: take 3 different gems, take 2 of the same color (only if the bank
   holds ≥ 4 of it), reserve 1 card (from a row or blind from a deck, +1 gold if available, max 3
   reserved), or buy 1 card (table or reserved; gold is wild; owned bonuses discount the cost).
+  Per official rules, if the bank has fewer than 3 gem colors left a take may grab fewer gems —
+  exactly as many colors as remain.
 - **10-gem hand limit**: a take/reserve action that would leave the player above 10 gems is illegal
-  (the engine rejects it; the UI disables such actions and says why). There is no gem-return move.
+  (the engine rejects it; the UI disables such actions and says why). There is no gem-return move
+  in normal play — but a player with _no_ other legal move (10 gems, 3 reservations, nothing
+  affordable, bank empty) may `swap` as a last resort: exchange 1 held gem for 1 bank gem, or
+  return 2 gems for nothing when the gem bank is empty. Rare, but it guarantees a game can never
+  deadlock (bot players in particular hoard their way into that corner).
 - Nobles: after an action, if exactly one noble is satisfied the visit is automatic; if several,
   the player's turn stays pending until they pick one (`{action:"noble"}` move).
 - Game end: reaching ≥ 15 prestige triggers the final round; everyone plays the same number of
