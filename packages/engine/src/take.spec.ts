@@ -20,8 +20,33 @@ describe("take gems", () => {
 	it("rejects duplicate colors, wrong counts, gold, and unknown colors", () => {
 		const state = setup(2, {}, "take-invalid");
 		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "ruby", "onyx"] }, 0), /different/);
-		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "onyx"] }, 0), /exactly 3/);
+		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "onyx"] }, 0), /3 different/);
+		assert.throws(() => applyMove(state, { action: "take", gems: [] }, 0), /1 to 3/);
 		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "onyx", "gold"] as never }, 0));
+	});
+
+	it("allows a reduced take only when fewer bank colors remain", () => {
+		const state = setup(2, {}, "take-reduced");
+		state.bank.diamond = 0;
+		state.bank.sapphire = 0;
+		state.bank.emerald = 0;
+		assert.throws(
+			() => applyMove(state, { action: "take", gems: ["ruby"] }, 0),
+			/3 different/,
+			"2 colors left, 1 is not enough"
+		);
+		const next = applyMove(state, { action: "take", gems: ["ruby", "onyx"] }, 0);
+		assert.equal(next.players[0]?.tokens.ruby, 1);
+		assert.equal(next.players[0]?.tokens.onyx, 1);
+		assert.equal(next.bank.ruby, 3);
+
+		const oneLeft = setup(2, {}, "take-reduced-one");
+		oneLeft.bank.diamond = 0;
+		oneLeft.bank.sapphire = 0;
+		oneLeft.bank.emerald = 0;
+		oneLeft.bank.ruby = 0;
+		const after = applyMove(oneLeft, { action: "take", gems: ["onyx"] }, 0);
+		assert.equal(after.players[0]?.tokens.onyx, 1);
 	});
 
 	it("rejects gems the bank does not have", () => {

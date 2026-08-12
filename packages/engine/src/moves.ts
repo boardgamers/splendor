@@ -3,8 +3,10 @@ import {
 	MAX_RESERVED,
 	MAX_TOKENS,
 	PRESTIGE_TARGET,
+	SWAP_MIN_TOKENS,
 	TAKE2_MIN_BANK,
 	activePlayers,
+	availableMoves,
 	bonuses,
 	canReserveFromDeck,
 	cardCostFor,
@@ -16,7 +18,7 @@ import {
 	scores,
 	tokenTotal,
 } from "./state.js";
-import { GEM_COLORS, type GameState, type Move, type PlayerState, type Tier } from "./types.js";
+import { GEM_COLORS, type GameState, type GemColor, type Move, type PlayerState, type Tier } from "./types.js";
 
 function fail(message: string): never {
 	throw new Error(`Illegal move: ${message}`);
@@ -65,18 +67,26 @@ function takeGems(state: GameState, player: PlayerState, gems: (keyof GameState[
 	}
 }
 
-function doTake(state: GameState, player: PlayerState, move: Extract<Move, { action: "take" }>): void {
-	if (move.gems.length !== 3) {
-		fail("you must take exactly 3 different gems");
+function checkTakeGems(state: GameState, gems: GemColor[]): void {
+	if (gems.length < 1 || gems.length > 3) {
+		fail("you must take 1 to 3 different gems");
 	}
-	if (new Set(move.gems).size !== 3) {
-		fail("the 3 gems must be of different colors");
+	if (new Set(gems).size !== gems.length) {
+		fail("the gems must be of different colors");
 	}
-	for (const color of move.gems) {
+	for (const color of gems) {
 		if (!GEM_COLORS.includes(color)) {
 			fail(`${color} is not a gem color (gold cannot be taken directly)`);
 		}
 	}
+	const takeable = GEM_COLORS.filter((color) => state.bank[color] > 0).length;
+	if (gems.length < 3 && gems.length !== takeable) {
+		fail(`you must take 3 different gems unless fewer bank colors remain (${takeable} left)`);
+	}
+}
+
+function doTake(state: GameState, player: PlayerState, move: Extract<Move, { action: "take" }>): void {
+	checkTakeGems(state, move.gems);
 	takeGems(state, player, move.gems);
 }
 
@@ -153,6 +163,18 @@ function doBuy(state: GameState, player: PlayerState, move: Extract<Move, { acti
 		player.reservedFrom.splice(reservedIndex, 1);
 	}
 	player.cards.push(card.id);
+}
+
+function doSwap(state: GameState, player: PlayerState, move: Extract<Move, { action: "swap" }>): void {
+	if (move.give === move.receive) {
+		player.tokens[move.give] -= SWAP_MIN_TOKENS;
+		state.bank[move.give] += SWAP_MIN_TOKENS;
+		return;
+	}
+	player.tokens[move.give]--;
+	state.bank[move.give]++;
+	state.bank[move.receive]--;
+	player.tokens[move.receive]++;
 }
 
 function doNoble(state: GameState, player: PlayerState, move: Extract<Move, { action: "noble" }>): void {
@@ -243,21 +265,13 @@ function validate(state: GameState, move: Move, playerIndex: number): void {
 	}
 	switch (move.action) {
 		case "take": {
-			if (move.gems.length !== 3) {
-				fail("you must take exactly 3 different gems");
-			}
-			if (new Set(move.gems).size !== 3) {
-				fail("the 3 gems must be of different colors");
-			}
+			checkTakeGems(state, move.gems);
 			for (const color of move.gems) {
-				if (!GEM_COLORS.includes(color)) {
-					fail(`${color} is not a gem color (gold cannot be taken directly)`);
-				}
 				if (state.bank[color] <= 0) {
 					fail(`the bank has no ${color} left`);
 				}
 			}
-			if (tokenTotal(player) + 3 > MAX_TOKENS) {
+			if (tokenTotal(player) + move.gems.length > MAX_TOKENS) {
 				fail(`you may hold at most ${MAX_TOKENS} gems (you have ${tokenTotal(player)})`);
 			}
 			return;
@@ -306,6 +320,30 @@ function validate(state: GameState, move: Move, playerIndex: number): void {
 			}
 			return;
 		}
+		case "swap": {
+			if (!GEM_COLORS.includes(move.give) || !GEM_COLORS.includes(move.receive)) {
+				fail("swap needs gem colors (gold cannot be swapped)");
+			}
+			if (move.give === move.receive) {
+				if (!GEM_COLORS.every((color) => state.bank[color] <= 0)) {
+					fail("you may only return gems when the bank has no gems left");
+				}
+				if (player.tokens[move.give] < SWAP_MIN_TOKENS) {
+					fail(`you need at least ${SWAP_MIN_TOKENS} ${move.give} to return`);
+				}
+			} else {
+				if (player.tokens[move.give] <= 0) {
+					fail(`you have no ${move.give} to give back`);
+				}
+				if (state.bank[move.receive] <= 0) {
+					fail(`the bank has no ${move.receive} left`);
+				}
+			}
+			if (availableMoves(state, playerIndex).some((encoded) => !encoded.startsWith("swap:"))) {
+				fail("you may only swap gems when you have no other legal move");
+			}
+			return;
+		}
 	}
 }
 
@@ -336,6 +374,9 @@ export function applyMove(state: GameState, move: Move, playerIndex: number): Ga
 			break;
 		case "buy":
 			doBuy(state, player, move);
+			break;
+		case "swap":
+			doSwap(state, player, move);
 			break;
 	}
 	state.pendingNobles = pendingNoblesFor(state, playerIndex);
