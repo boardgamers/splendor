@@ -9,6 +9,7 @@
 	import GameEndBanner from "./lib/GameEndBanner.svelte";
 	import ReplayBar from "./lib/ReplayBar.svelte";
 	import LogFeed from "./lib/LogFeed.svelte";
+	import GemField from "./lib/GemField.svelte";
 
 	interface Props {
 		store: ViewerStore;
@@ -27,6 +28,8 @@
 			: []
 	);
 </script>
+
+<GemField />
 
 {#if state}
 	<div class="board" class:compact={store.preferences.compactCards === true}>
@@ -101,9 +104,12 @@
 		padding: 16px;
 		max-width: 1400px;
 		/* Center the board within a wide iframe so large screens don't leave a
-		   one-sided empty gutter. */
+	   one-sided empty gutter. */
 		margin: 0 auto;
 		width: 100%;
+		/* Sit above the fixed GemField watermark layer (z-index 0). */
+		position: relative;
+		z-index: 1;
 	}
 	.top {
 		display: flex;
@@ -220,6 +226,8 @@
 		padding: 40px;
 		text-align: center;
 		color: var(--text-dim);
+		position: relative;
+		z-index: 1;
 	}
 	.board.compact {
 		--card-w: 68px;
