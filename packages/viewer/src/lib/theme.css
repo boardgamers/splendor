@@ -11,6 +11,13 @@
 	--gold-soft: rgba(184, 145, 42, 0.4);
 	--noble-bg: linear-gradient(155deg, #f3ead3, #e7d9b8 60%, #dcc9a0);
 	--noble-text: #4a3a1a;
+	/* Decorative "table felt" background: soft jewel-tone glows over a warm
+	   light base. Muted in light mode so panels/text stay readable. */
+	--bg-decor:
+		radial-gradient(60vmax 60vmax at -10% -10%, rgba(47, 111, 214, 0.1), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% -5%, rgba(46, 158, 91, 0.1), transparent 60%),
+		radial-gradient(50vmax 50vmax at -5% 110%, rgba(210, 64, 60, 0.08), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% 110%, rgba(184, 145, 42, 0.12), transparent 60%), var(--bg);
 	--diamond: #e9edf2;
 	--sapphire: #2f6fd6;
 	--emerald: #2e9e5b;
@@ -37,6 +44,13 @@ html.dark {
 	--gold-soft: rgba(212, 175, 55, 0.35);
 	--noble-bg: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
 	--noble-text: #e8e6e0;
+	/* Dark mode: same jewel glows but deeper and more saturated over the dark
+	   base, like gems glinting on a dark table. */
+	--bg-decor:
+		radial-gradient(60vmax 60vmax at -10% -10%, rgba(47, 111, 214, 0.22), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% -5%, rgba(46, 158, 91, 0.2), transparent 60%),
+		radial-gradient(50vmax 50vmax at -5% 110%, rgba(210, 64, 60, 0.18), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% 110%, rgba(212, 175, 55, 0.2), transparent 60%), var(--bg);
 }
 
 /* Slightly larger pieces on large screens (the two-column layout fills the
@@ -83,7 +97,8 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	background: var(--bg);
+	background: var(--bg-decor);
+	background-attachment: fixed;
 	color: var(--text);
 	font-family: "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
 	font-size: 14px;
