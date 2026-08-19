@@ -19,9 +19,15 @@
 		radial-gradient(50vmax 50vmax at 108% -4%, rgba(46, 158, 91, 0.26), transparent 62%),
 		radial-gradient(48vmax 48vmax at -4% 108%, rgba(210, 64, 60, 0.22), transparent 62%),
 		radial-gradient(52vmax 52vmax at 108% 108%, rgba(184, 145, 42, 0.3), transparent 62%), var(--bg);
-	/* Ghost gem watermark: a faint faceted-gem outline tiled behind everything.
-	   Inline SVG data-URI (no asset files); dark strokes at low opacity on light. */
-	--gem-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.05' stroke-width='1.5'%3E%3Cpath d='M30 18 L54 6 L78 18 L66 42 L42 42 Z'/%3E%3Cpath d='M30 18 L42 42 L54 54 L66 42 L78 18'/%3E%3Cpath d='M42 42 L54 6 L66 42'/%3E%3C/g%3E%3C/svg%3E");
+	/* Ghost gem watermark: three organic gem cuts (round brilliant, pear,
+	   marquise) scattered at varied sizes/positions behind everything. Inline SVG
+	   data-URIs; dark on light. */
+	--gem-watermark:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.05' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M25 35 L40 20 L60 20 L75 35 L50 78 Z'/%3E%3Cpath d='M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='460' height='460' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.04' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 18 C66 18 76 32 76 46 C76 62 63 78 50 84 C37 78 24 62 24 46 C24 32 34 18 50 18 Z'/%3E%3Cpath d='M30 44 L70 44 M50 18 L50 84'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.045' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 16 C64 30 74 44 74 56 C74 72 63 84 50 84 C37 84 26 72 26 56 C26 44 36 30 50 16 Z'/%3E%3Cpath d='M28 54 L72 54'/%3E%3C/g%3E%3C/svg%3E");
+	--gem-watermark-size: 200px 200px, 460px 460px, 320px 320px;
+	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%;
 	--diamond: #e9edf2;
 	--sapphire: #2f6fd6;
 	--emerald: #2e9e5b;
@@ -38,25 +44,33 @@
 
 /* Dark theme: applied when the BGS wrapper sets <html class="dark">. */
 html.dark {
-	--bg: #17181c;
-	--bg-panel: #1f2127;
-	--bg-elevated: #262931;
-	--line: #353945;
+	--bg: #101116;
+	--bg-panel: #1b1d24;
+	--bg-elevated: #23252e;
+	--line: #333742;
 	--text: #e8e6e0;
 	--text-dim: #9b9789;
 	--gold: #d4af37;
 	--gold-soft: rgba(212, 175, 55, 0.35);
 	--noble-bg: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
 	--noble-text: #e8e6e0;
-	/* Dark mode: same jewel glows but deeper and more saturated over the dark
-	   base, like gems glinting on a dark table. */
+	/* Deep jewel glows over a near-black base, with a dark vignette pulling the
+	   edges down so the table reads as a lit pool in the middle. */
 	--bg-decor:
-		radial-gradient(60vmax 60vmax at -10% -10%, rgba(47, 111, 214, 0.22), transparent 60%),
-		radial-gradient(55vmax 55vmax at 110% -5%, rgba(46, 158, 91, 0.2), transparent 60%),
-		radial-gradient(50vmax 50vmax at -5% 110%, rgba(210, 64, 60, 0.18), transparent 60%),
-		radial-gradient(55vmax 55vmax at 110% 110%, rgba(212, 175, 55, 0.2), transparent 60%), var(--bg);
-	/* Light strokes at low opacity on dark. */
-	--gem-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.05' stroke-width='1.5'%3E%3Cpath d='M30 18 L54 6 L78 18 L66 42 L42 42 Z'/%3E%3Cpath d='M30 18 L42 42 L54 54 L66 42 L78 18'/%3E%3Cpath d='M42 42 L54 6 L66 42'/%3E%3C/g%3E%3C/svg%3E");
+		radial-gradient(120vmax 90vmax at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.5) 100%),
+		radial-gradient(60vmax 60vmax at -10% -10%, rgba(47, 111, 214, 0.2), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% -5%, rgba(46, 158, 91, 0.18), transparent 60%),
+		radial-gradient(50vmax 50vmax at -5% 110%, rgba(210, 64, 60, 0.16), transparent 60%),
+		radial-gradient(55vmax 55vmax at 110% 110%, rgba(212, 175, 55, 0.18), transparent 60%), var(--bg);
+	/* Three organic gem cuts (round brilliant, pear, marquise) very faint on
+	   dark — occasional faint glints, not a texture. The rectangular emerald cut
+	   was dropped: its straight edges read as visible blocks at tile seams. */
+	--gem-watermark:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.03' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M25 35 L40 20 L60 20 L75 35 L50 78 Z'/%3E%3Cpath d='M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.024' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 18 C66 18 76 32 76 46 C76 62 63 78 50 84 C37 78 24 62 24 46 C24 32 34 18 50 18 Z'/%3E%3Cpath d='M30 44 L70 44 M50 18 L50 84'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.026' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 16 C64 30 74 44 74 56 C74 72 63 84 50 84 C37 84 26 72 26 56 C26 44 36 30 50 16 Z'/%3E%3Cpath d='M28 54 L72 54'/%3E%3C/g%3E%3C/svg%3E");
+	--gem-watermark-size: 240px 240px, 520px 520px, 360px 360px;
+	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%;
 }
 
 /* Slightly larger pieces on large screens (the two-column layout fills the
@@ -99,13 +113,23 @@ html.dark {
 	box-sizing: border-box;
 }
 
-html,
+html {
+	/* The jewel-tone glows + base color live on <html>, full-viewport and fixed.
+	   Kept separate from the watermark (on <body>) so each background has a
+	   coherent layer count — mixing them on one element mis-sized the gradients
+	   into visible rectangles. */
+	background: var(--bg-decor);
+	background-attachment: fixed;
+}
+
 body {
 	margin: 0;
 	padding: 0;
-	/* Ghost gem watermark tiled over the jewel-tone glows, both fixed so they
-	   don't scroll with the content. */
-	background: var(--gem-watermark), var(--bg-decor);
+	/* Ghost gem watermark scattered over the glows; fixed so it doesn't scroll. */
+	background-image: var(--gem-watermark);
+	background-size: var(--gem-watermark-size, auto);
+	background-position: var(--gem-watermark-position, 0 0);
+	background-repeat: repeat;
 	background-attachment: fixed;
 	color: var(--text);
 	font-family: "Segoe UI", "Helvetica Neue", system-ui, sans-serif;

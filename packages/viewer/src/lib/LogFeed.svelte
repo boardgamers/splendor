@@ -7,8 +7,6 @@
 
 	let { store }: Props = $props();
 	const lines = $derived(store.logLines);
-	const compact = $derived(store.preferences.compactCards === true);
-	const showFeed = $derived(store.preferences.logFeed !== false);
 	const recent = $derived(
 		lines
 			.map((line, index) => ({ line, index }))
@@ -18,60 +16,30 @@
 </script>
 
 <div class="side">
-	<div class="prefs">
-		<label title="Smaller development cards">
-			<input
-				type="checkbox"
-				checked={compact}
-				onchange={(e) => store.updatePreference("compactCards", e.currentTarget.checked)}
-			/>
-			Compact cards
-		</label>
-		<label title="Show the event feed below the board">
-			<input
-				type="checkbox"
-				checked={showFeed}
-				onchange={(e) => store.updatePreference("logFeed", e.currentTarget.checked)}
-			/>
-			Event feed
-		</label>
+	<div class="caption">Recent events</div>
+	<div class="feed">
+		{#each recent as item (item.index)}
+			<div class="entry" class:latest={item.index === lines.length - 1}>{item.line}</div>
+		{/each}
+		{#if recent.length === 0}
+			<div class="entry dim">No events yet</div>
+		{/if}
 	</div>
-
-	{#if showFeed}
-		<div class="feed">
-			{#each recent as item (item.index)}
-				<div class="entry" class:latest={item.index === lines.length - 1}>{item.line}</div>
-			{/each}
-			{#if recent.length === 0}
-				<div class="entry dim">No events yet</div>
-			{/if}
-		</div>
-	{/if}
 </div>
 
 <style>
 	.side {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
+		gap: 4px;
 	}
-	.prefs {
-		display: flex;
-		gap: 14px;
-		align-items: center;
-		padding: 0 4px;
-	}
-	.prefs label {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 12px;
+	.caption {
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 		color: var(--text-dim);
-		cursor: pointer;
-		user-select: none;
-	}
-	.prefs input {
-		accent-color: var(--gold);
+		padding: 0 4px;
 	}
 	.feed {
 		background: var(--bg-panel);
