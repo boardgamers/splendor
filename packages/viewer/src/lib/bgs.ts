@@ -1,6 +1,19 @@
 import type { GameState, Move } from "splendor-engine";
 import { Emitter } from "./emitter";
 
+// Structured clone (postMessage) cannot serialize Svelte 5 $state proxies — it
+// throws "Proxy object could not be cloned". Uplink payloads are always plain
+// JSON data, so a JSON round-trip strips any proxies and yields a cloneable
+// copy. Only wrap the postMessage path; if a payload is somehow not
+// JSON-serializable, fall back to sending it as-is (never break the uplink).
+function cloneable<T>(value: T): T {
+	try {
+		return value === undefined ? value : (JSON.parse(JSON.stringify(value)) as T);
+	} catch {
+		return value;
+	}
+}
+
 export interface ViewerEvents {
 	state: GameState;
 	"state:updated": void;
@@ -89,7 +102,7 @@ export class ViewerBridge {
 		// A host inside the BGS iframe parent listens via postMessage; a local harness
 		// (dev page) listens on the emitter returned by launch() — forward uplink there too.
 		const target = window.parent === window ? null : window.parent;
-		target?.postMessage({ type: `splendor:${event}`, payload }, "*");
+		target?.postMessage({ type: `splendor:${event}`, payload: cloneable(payload) }, "*");
 		this.events.emit(event, payload);
 	}
 }
