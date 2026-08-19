@@ -39,7 +39,6 @@
 					<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
 				{/each}
 			</div>
-			<Bank {state} {store} />
 		</div>
 
 		<div class="nobles-row">
@@ -71,7 +70,10 @@
 			</div>
 		{/each}
 
-		<ActionBar {store} />
+		<div class="action-zone">
+			<Bank {state} {store} />
+			<ActionBar {store} />
+		</div>
 		<LogFeed {store} />
 	</div>
 {:else}
@@ -91,6 +93,14 @@
 		gap: 14px;
 		align-items: flex-start;
 		flex-wrap: wrap;
+	}
+	/* Bank sits directly above the action bar so picking gems and confirming the
+	   take are next to each other (short mouse travel). */
+	.action-zone {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		align-items: stretch;
 	}
 	.players {
 		display: grid;

@@ -41,12 +41,7 @@
 				{#if store.gemPick.length > 0}
 					<div class="picked">
 						{#each store.gemPick as color, i (i)}
-							<GemChip
-								{color}
-								size="small"
-								clickable={i === store.gemPick.length - 1}
-								onclick={() => store.unpickGem()}
-							/>
+							<GemChip {color} size="small" clickable onclick={() => store.unpickGemAt(i)} />
 						{/each}
 					</div>
 					<button class="confirm" disabled={!draft} onclick={() => store.confirmTake()}>

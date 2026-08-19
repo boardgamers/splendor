@@ -1,5 +1,6 @@
 import {
 	GEM_COLORS,
+	applyMove,
 	availableMoves,
 	bonuses,
 	canBuy,
@@ -298,6 +299,10 @@ export class ViewerStore {
 		this.gemPick = this.gemPick.slice(0, -1);
 	}
 
+	unpickGemAt(index: number): void {
+		this.gemPick = this.gemPick.filter((_, i) => i !== index);
+	}
+
 	toggleReserve(): void {
 		if (!this.myTurn || !this.canReserveAtAll()) {
 			return;
@@ -369,6 +374,30 @@ export class ViewerStore {
 	private send(move: Move): void {
 		this.bridge.sendMove(move);
 		this.cancel();
+		this.applyOptimistic(move);
+	}
+
+	// Apply my own move to the local (stripped) state right away so the UI feels
+	// instant; the authoritative state from the server reconciles on arrival.
+	// Only attempted on my turn with a move that's legal against my view — any
+	// failure just skips the optimistic step (the server state will correct it).
+	private applyOptimistic(move: Move): void {
+		const s = this.liveState;
+		if (!s || this.playerIndex === undefined || s.current !== this.playerIndex || this.replay.active) {
+			return;
+		}
+		// Reserving blind from a deck can't be applied on the stripped view (decks
+		// are -1 placeholders) — skip the optimistic step and wait for the server.
+		if (move.action === "reserve" && move.cardId === undefined) {
+			return;
+		}
+		try {
+			const clone = JSON.parse(JSON.stringify(s)) as GameState;
+			applyMove(clone, move, this.playerIndex);
+			this.setState(clone);
+		} catch {
+			// not applicable against the stripped view — wait for the server state
+		}
 	}
 }
 
