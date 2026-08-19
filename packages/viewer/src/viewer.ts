@@ -28,17 +28,6 @@ export function launch(selector: string): Emitter {
 	// Live theme changes via the emitter (shim re-emits the theme message).
 	bridge.on("theme", ({ dark }) => applyTheme(dark));
 
-	// Trace the loading handshake to debug the hard-refresh spinner: log when we
-	// receive the first state and when we emit ready. Compare against the shim's
-	// own "received message from controller" / gameReady / displayReady logs.
-	let sawState = false;
-	bridge.on("state", (s) => {
-		if (!sawState) {
-			sawState = true;
-			console.log("[splendor] first state received", { players: s?.players?.length, current: s?.current });
-		}
-	});
-
 	mount(App, {
 		target,
 		props: {
@@ -48,14 +37,24 @@ export function launch(selector: string): Emitter {
 	});
 	console.log("[splendor] viewer mounted");
 
-	// Emit ready on a macrotask, not requestAnimationFrame: the BGS iframe starts
-	// hidden (class:hidden until displayReady), and hidden iframes throttle or
-	// skip rAF entirely in Firefox/Brave — so a rAF-gated ready never fires and
-	// the platform spinner never clears. A timeout always runs.
-	setTimeout(() => {
-		console.log("[splendor] emitting ready");
-		bridge.ready();
-	}, 0);
+	// Emit ready only after the FIRST state has arrived and rendered — that's when
+	// the game is actually shown. Emitting on mount (before state) makes the shim
+	// post displayReady while the viewer still shows "Waiting for game state…",
+	// and on a hard refresh that early displayReady can race ahead of the parent's
+	// listener and get dropped, leaving the spinner up forever. A macrotask after
+	// setState lets Svelte flush the DOM first (never rAF — hidden iframes skip it).
+	let readySent = false;
+	bridge.on("state", (s) => {
+		console.log("[splendor] state received", { players: s?.players?.length, current: s?.current, readySent });
+		if (readySent) {
+			return;
+		}
+		readySent = true;
+		setTimeout(() => {
+			console.log("[splendor] emitting ready (after first state)");
+			bridge.ready();
+		}, 0);
+	});
 	return bridge.events as unknown as Emitter;
 }
 
