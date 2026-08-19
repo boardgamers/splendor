@@ -22,7 +22,11 @@ export function launch(selector: string): Emitter {
 		},
 	});
 
-	requestAnimationFrame(() => requestAnimationFrame(() => bridge.ready()));
+	// Emit ready on a macrotask, not requestAnimationFrame: the BGS iframe starts
+	// hidden (class:hidden until displayReady), and hidden iframes throttle or
+	// skip rAF entirely in Firefox/Brave — so a rAF-gated ready never fires and
+	// the platform spinner never clears. A timeout always runs.
+	setTimeout(() => bridge.ready(), 0);
 	return bridge.events as unknown as Emitter;
 }
 
