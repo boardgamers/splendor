@@ -36,7 +36,7 @@
 		<div class="columns">
 			<div class="main">
 				<div class="top">
-					<div class="players">
+					<div class="players" data-count={state.players.length}>
 						{#each state.players as _, i (i)}
 							<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
 						{/each}
@@ -121,13 +121,27 @@
 	}
 	.players {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		/* Panels share the main column (board) width evenly: 2 players side by
+		   side, 3 across, 4 as 2x2 — so the top row aligns with the board below
+		   instead of clustering narrow or stretching past it. */
+		grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
 		grid-auto-rows: min-content;
 		align-content: start;
 		gap: 10px;
 		flex: 1 1 auto;
 		min-width: 0;
 		align-items: start;
+	}
+	@media (min-width: 1100px) {
+		.players[data-count="2"] {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.players[data-count="3"] {
+			grid-template-columns: repeat(3, 1fr);
+		}
+		.players[data-count="4"] {
+			grid-template-columns: repeat(2, 1fr);
+		}
 	}
 	.nobles-row {
 		display: flex;
@@ -153,16 +167,19 @@
 		min-width: 0;
 	}
 	/* Wide screens: two columns — the board (players/nobles/tiers) on the left,
-	   bank + action bar + event feed in a fixed right sidebar — so the space is
-	   used instead of a one-sided gutter. The sidebar sticks for easy access. */
+	   bank + action bar + event feed in a fixed right sidebar. The main column
+	   hugs the board content width (the tier rows are its widest element) and the
+	   whole group is centered, so there's no dead gap between the columns. */
 	@media (min-width: 1100px) {
 		.columns {
 			flex-direction: row;
 			align-items: flex-start;
-			gap: 20px;
+			justify-content: center;
+			gap: 24px;
 		}
 		.main {
-			flex: 1 1 auto;
+			flex: 0 0 auto;
+			align-items: stretch;
 		}
 		.side {
 			flex: 0 0 360px;

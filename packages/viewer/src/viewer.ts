@@ -28,6 +28,17 @@ export function launch(selector: string): Emitter {
 	// Live theme changes via the emitter (shim re-emits the theme message).
 	bridge.on("theme", ({ dark }) => applyTheme(dark));
 
+	// Trace the loading handshake to debug the hard-refresh spinner: log when we
+	// receive the first state and when we emit ready. Compare against the shim's
+	// own "received message from controller" / gameReady / displayReady logs.
+	let sawState = false;
+	bridge.on("state", (s) => {
+		if (!sawState) {
+			sawState = true;
+			console.log("[splendor] first state received", { players: s?.players?.length, current: s?.current });
+		}
+	});
+
 	mount(App, {
 		target,
 		props: {
@@ -35,12 +46,16 @@ export function launch(selector: string): Emitter {
 			onPlayerClick: (index: number) => bridge.playerClicked(index),
 		},
 	});
+	console.log("[splendor] viewer mounted");
 
 	// Emit ready on a macrotask, not requestAnimationFrame: the BGS iframe starts
 	// hidden (class:hidden until displayReady), and hidden iframes throttle or
 	// skip rAF entirely in Firefox/Brave — so a rAF-gated ready never fires and
 	// the platform spinner never clears. A timeout always runs.
-	setTimeout(() => bridge.ready(), 0);
+	setTimeout(() => {
+		console.log("[splendor] emitting ready");
+		bridge.ready();
+	}, 0);
 	return bridge.events as unknown as Emitter;
 }
 
