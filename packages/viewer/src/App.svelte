@@ -92,7 +92,11 @@
 		flex-direction: column;
 		gap: 14px;
 		padding: 16px;
-		max-width: 1060px;
+		max-width: 1400px;
+		/* Center the board within a wide iframe so large screens don't leave a
+		   one-sided empty gutter. */
+		margin: 0 auto;
+		width: 100%;
 	}
 	.top {
 		display: flex;
@@ -127,6 +131,13 @@
 		display: flex;
 		gap: 12px;
 		align-items: center;
+	}
+	/* On wide screens spread the deck + cards across the full board width so the
+	   row fills the space instead of clustering left. Capped so gaps stay sane. */
+	@media (min-width: 900px) {
+		.tier-row {
+			justify-content: space-evenly;
+		}
 	}
 	/* Face-down slot for a -1 placeholder (unknown replacement card on the
 	   stripped view after an optimistic buy/reserve). Matches the card size. */

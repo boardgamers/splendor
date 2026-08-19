@@ -24,6 +24,7 @@ export interface ViewerEvents {
 	player: { index?: number };
 	avatars: string[];
 	preferences: Record<string, unknown>;
+	theme: { dark: boolean };
 	"replay:start": void;
 	"replay:to": number;
 	"replay:end": void;

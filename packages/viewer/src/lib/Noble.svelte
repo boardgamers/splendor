@@ -36,7 +36,7 @@
 		width: var(--noble);
 		height: var(--noble);
 		border-radius: 8px;
-		background: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
+		background: var(--noble-bg);
 		border: 1px solid rgba(212, 175, 55, 0.45);
 		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 		padding: calc(var(--noble) * 0.06);
@@ -62,7 +62,7 @@
 		/* vertically centered between the points badge and the gems (flex column + space-between) */
 		font-size: calc(var(--noble) * 0.15);
 		line-height: 1.1;
-		color: var(--text);
+		color: var(--noble-text);
 		opacity: 0.9;
 		text-align: center;
 		max-width: 100%;

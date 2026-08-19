@@ -1,12 +1,16 @@
 :root {
-	--bg: #17181c;
-	--bg-panel: #1f2127;
-	--bg-elevated: #262931;
-	--line: #353945;
-	--text: #e8e6e0;
-	--text-dim: #9b9789;
-	--gold: #d4af37;
-	--gold-soft: rgba(212, 175, 55, 0.35);
+	/* Light theme is the default (the BGS wrapper only adds a `dark` class on
+	   <html> for dark mode; no class means light). */
+	--bg: #eceae4;
+	--bg-panel: #f7f5ef;
+	--bg-elevated: #ffffff;
+	--line: #d3cfc2;
+	--text: #26241d;
+	--text-dim: #6f6a5c;
+	--gold: #b8912a;
+	--gold-soft: rgba(184, 145, 42, 0.4);
+	--noble-bg: linear-gradient(155deg, #f3ead3, #e7d9b8 60%, #dcc9a0);
+	--noble-text: #4a3a1a;
 	--diamond: #e9edf2;
 	--sapphire: #2f6fd6;
 	--emerald: #2e9e5b;
@@ -19,6 +23,43 @@
 	--chip-small: 24px;
 	--chip-mini: 18px;
 	--noble: 96px;
+}
+
+/* Dark theme: applied when the BGS wrapper sets <html class="dark">. */
+html.dark {
+	--bg: #17181c;
+	--bg-panel: #1f2127;
+	--bg-elevated: #262931;
+	--line: #353945;
+	--text: #e8e6e0;
+	--text-dim: #9b9789;
+	--gold: #d4af37;
+	--gold-soft: rgba(212, 175, 55, 0.35);
+	--noble-bg: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
+	--noble-text: #e8e6e0;
+}
+
+/* Scale the board up on large screens so it fills the available width instead
+   of leaving a wide empty gutter beside a fixed-size board. */
+@media (min-width: 1100px) {
+	:root {
+		--card-w: 100px;
+		--card-h: 138px;
+		--chip: 38px;
+		--chip-small: 27px;
+		--chip-mini: 20px;
+		--noble: 108px;
+	}
+}
+@media (min-width: 1500px) {
+	:root {
+		--card-w: 112px;
+		--card-h: 154px;
+		--chip: 42px;
+		--chip-small: 30px;
+		--chip-mini: 22px;
+		--noble: 120px;
+	}
 }
 
 /* Scale the whole board down on narrow screens so tier rows fit without
