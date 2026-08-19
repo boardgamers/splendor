@@ -15,8 +15,9 @@ export async function init(
 	return setup(players, options ?? {}, seed);
 }
 
-export async function move(data: GameState, mv: Move, player: number): Promise<GameState> {
-	return applyMove(data, mv, player);
+export async function move(data: GameState, mv: unknown, player: number): Promise<GameState> {
+	// mv is untrusted JSON from the network; applyMove sanitizes it before use.
+	return applyMove(data, mv as Move, player);
 }
 
 export function ended(data: GameState): boolean {

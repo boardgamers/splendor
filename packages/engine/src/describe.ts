@@ -8,10 +8,7 @@ export function describeLogEntry(state: GameState, entry: LogEntry): string {
 		case "start":
 			return `Game started with ${entry.players} players`;
 		case "move": {
-			// Tolerate a double-wrapped move ({ move: { action, ... } }) produced by an
-			// earlier viewer bug that nested the payload; unwrap one level if present.
-			const raw = entry.move as unknown as { action?: string; move?: unknown };
-			const move = (raw && raw.action === undefined && raw.move ? raw.move : entry.move) as typeof entry.move;
+			const move = entry.move;
 			switch (move.action) {
 				case "take":
 					return `${name(entry.player)} takes ${move.gems.join(", ")}`;

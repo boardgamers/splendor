@@ -24,6 +24,90 @@ function fail(message: string): never {
 	throw new Error(`Illegal move: ${message}`);
 }
 
+// The move arrives over the network as untrusted JSON — the declared `Move`
+// type is only a compile-time promise. Narrow it to a well-formed move before
+// any rule validation or state access, so a malformed payload (wrong types,
+// non-array gems, string/object ids, huge arrays, junk enum values) is rejected
+// with an Illegal-move error instead of crashing with a TypeError or, worse,
+// being silently mishandled. Only plain data shapes are accepted.
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
+	const proto = Object.getPrototypeOf(value);
+	return proto === Object.prototype || proto === null;
+}
+
+function isGemColor(value: unknown): value is GemColor {
+	return typeof value === "string" && (GEM_COLORS as readonly string[]).includes(value);
+}
+
+function isCardId(value: unknown): value is number {
+	return typeof value === "number" && Number.isInteger(value) && value >= 0;
+}
+
+function sanitizeMove(raw: unknown): Move {
+	if (!isPlainObject(raw)) {
+		fail("move must be a plain object");
+	}
+	const action = raw.action;
+	if (typeof action !== "string") {
+		fail("move.action must be a string");
+	}
+	switch (action) {
+		case "take": {
+			const gems = raw.gems;
+			if (!Array.isArray(gems) || gems.length < 1 || gems.length > 3 || !gems.every(isGemColor)) {
+				fail("take needs 1 to 3 valid gem colors");
+			}
+			return { action: "take", gems: [...gems] };
+		}
+		case "take2": {
+			if (!isGemColor(raw.color)) {
+				fail("take2 needs a valid gem color");
+			}
+			return { action: "take2", color: raw.color };
+		}
+		case "reserve": {
+			const hasCard = raw.cardId !== undefined;
+			const hasTier = raw.tier !== undefined;
+			if (hasCard === hasTier) {
+				fail("reserve needs exactly one of cardId (table) or tier (deck)");
+			}
+			if (hasCard) {
+				if (!isCardId(raw.cardId)) {
+					fail("reserve cardId must be a non-negative integer");
+				}
+				return { action: "reserve", cardId: raw.cardId };
+			}
+			if (raw.tier !== 1 && raw.tier !== 2 && raw.tier !== 3) {
+				fail("reserve tier must be 1, 2 or 3");
+			}
+			return { action: "reserve", tier: raw.tier };
+		}
+		case "buy": {
+			if (!isCardId(raw.cardId)) {
+				fail("buy cardId must be a non-negative integer");
+			}
+			return { action: "buy", cardId: raw.cardId };
+		}
+		case "noble": {
+			if (!isCardId(raw.nobleId)) {
+				fail("noble nobleId must be a non-negative integer");
+			}
+			return { action: "noble", nobleId: raw.nobleId };
+		}
+		case "swap": {
+			if (!isGemColor(raw.give) || !isGemColor(raw.receive)) {
+				fail("swap needs valid gem colors for give and receive");
+			}
+			return { action: "swap", give: raw.give, receive: raw.receive };
+		}
+		default:
+			fail(`unknown move action ${action}`);
+	}
+}
+
 function currentPlayerState(state: GameState): PlayerState {
 	const player = state.players[state.current];
 	if (!player || player.dropped) {
@@ -352,7 +436,10 @@ function validate(state: GameState, move: Move, playerIndex: number): void {
 	}
 }
 
-export function applyMove(state: GameState, move: Move, playerIndex: number): GameState {
+export function applyMove(state: GameState, rawMove: Move, playerIndex: number): GameState {
+	// Sanitize first: narrow the untrusted payload to a well-formed move and use
+	// the fresh plain object throughout (so the log never stores a hostile object).
+	const move = sanitizeMove(rawMove);
 	validate(state, move, playerIndex);
 	const player = state.players[playerIndex] as PlayerState;
 	state.log.push({ type: "move", player: playerIndex, move });
