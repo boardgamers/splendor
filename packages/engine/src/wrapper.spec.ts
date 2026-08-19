@@ -57,8 +57,13 @@ describe("wrapper", () => {
 	it("messages drains events", async () => {
 		let state = await fresh();
 		state = await move(state, TAKE, 0);
+		// Plain moves no longer post to chat (they flood it) — only noble visits and
+		// game-lifecycle events do. A take therefore yields no chat message...
+		assert.deepEqual(messages(state).messages, []);
+		// ...but a lifecycle event (a player leaving) does, and reading it drains it.
+		state = await dropPlayer(state, 1);
 		const first = messages(state);
-		assert.ok(first.messages.some((m) => m.includes("Ada takes")));
+		assert.ok(first.messages.some((m) => m.includes("left the game")));
 		const second = messages(first.data as GameState);
 		assert.deepEqual(second.messages, []);
 	});

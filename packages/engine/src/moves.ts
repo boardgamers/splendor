@@ -11,7 +11,6 @@ import {
 	canReserveFromDeck,
 	cardCostFor,
 	findTableCard,
-	formatMove,
 	pendingNoblesFor,
 	playerName,
 	prestige,
@@ -476,7 +475,10 @@ export function applyMove(state: GameState, rawMove: Move, playerIndex: number):
 		return state;
 	}
 
-	state.messages.push(formatMove(state, playerIndex, move));
+	// Individual moves (take/buy/reserve/swap) are not pushed to chat — they flood
+	// it. They still appear in the event feed via the game log (describeLog); chat
+	// only carries noble visits and game-lifecycle events (final round, game over,
+	// player left).
 	switch (move.action) {
 		case "take":
 			doTake(state, player, move);
