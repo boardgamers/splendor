@@ -39,28 +39,32 @@
 		background: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
 		border: 1px solid rgba(212, 175, 55, 0.45);
 		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
-		padding: 6px;
+		padding: calc(var(--noble) * 0.06);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 4px;
+		gap: calc(var(--noble) * 0.04);
 		position: relative;
 		user-select: none;
+		overflow: hidden;
 		transition:
 			transform 0.16s ease,
 			box-shadow 0.16s ease;
 	}
 	.points {
 		position: absolute;
-		top: 5px;
-		left: 7px;
-		font-size: 17px;
+		top: calc(var(--noble) * 0.05);
+		left: calc(var(--noble) * 0.07);
+		font-size: calc(var(--noble) * 0.18);
 		font-weight: 800;
+		line-height: 1;
 		color: var(--gold);
 	}
 	.name {
-		margin-top: 22px;
-		font-size: 10px;
+		/* sits under the points badge, centered across the tile */
+		margin-top: calc(var(--noble) * 0.2);
+		font-size: calc(var(--noble) * 0.11);
+		line-height: 1.1;
 		color: var(--text-dim);
 		text-align: center;
 		max-width: 100%;
@@ -69,10 +73,13 @@
 		white-space: nowrap;
 	}
 	.reqs {
+		/* pinned to the bottom so wrapped gems never overflow the tile */
+		margin-top: auto;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 3px;
+		align-content: flex-end;
+		gap: calc(var(--noble) * 0.03);
 	}
 	.noble.selectable {
 		cursor: pointer;
