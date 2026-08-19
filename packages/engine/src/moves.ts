@@ -355,7 +355,8 @@ export function applyMove(state: GameState, move: Move, playerIndex: number): Ga
 
 	if (state.pendingNobles.length > 0) {
 		const nobleMove = move as Extract<Move, { action: "noble" }>;
-		state.messages.push(formatMove(state, playerIndex, nobleMove));
+		// doNoble already emits the chat message ("X visits Y (+3 prestige)");
+		// pushing formatMove here too would double-post the same event to chat.
 		doNoble(state, player, nobleMove);
 		postAction(state);
 		return state;

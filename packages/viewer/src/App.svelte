@@ -93,10 +93,14 @@
 		flex-wrap: wrap;
 	}
 	.players {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		grid-auto-rows: min-content;
+		align-content: start;
 		gap: 10px;
-		flex-wrap: wrap;
-		flex: 1;
+		flex: 1 1 auto;
+		min-width: 0;
+		align-items: start;
 	}
 	.nobles-row {
 		display: flex;
@@ -108,6 +112,11 @@
 		gap: 12px;
 		align-items: center;
 	}
+	/* Keep cards at natural size; if a row is genuinely too wide, scroll it
+	   horizontally instead of flex-shrinking cards into tall slivers. */
+	.tier-row > :global(*) {
+		flex-shrink: 0;
+	}
 	.loading {
 		padding: 40px;
 		text-align: center;
@@ -117,13 +126,34 @@
 		--card-w: 68px;
 		--card-h: 94px;
 	}
-	@media (max-width: 900px) {
+
+	@media (max-width: 720px) {
+		.board {
+			padding: 10px;
+			gap: 10px;
+		}
+		.top {
+			flex-direction: column;
+			align-items: stretch;
+		}
+		.top > .players {
+			align-self: start;
+			width: 100%;
+		}
+		/* Players collapse to a compact grid above the board; Bank sits full-width
+		   below them, before the nobles/cards. */
+		.players {
+			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+			gap: 8px;
+			flex: 0 0 auto;
+		}
 		.tier-row {
 			gap: 8px;
+			overflow-x: auto;
+			padding-bottom: 4px;
 		}
-		:global(:root) {
-			--card-w: 76px;
-			--card-h: 106px;
+		.nobles-row {
+			gap: 8px;
 		}
 	}
 </style>

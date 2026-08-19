@@ -33,8 +33,8 @@
 
 <style>
 	.noble {
-		width: 96px;
-		height: 96px;
+		width: var(--noble);
+		height: var(--noble);
 		border-radius: 8px;
 		background: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
 		border: 1px solid rgba(212, 175, 55, 0.45);

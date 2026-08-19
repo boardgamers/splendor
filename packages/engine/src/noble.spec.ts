@@ -54,6 +54,9 @@ describe("nobles", () => {
 		assert.equal(prestige(next.players[0]!), before + 3);
 		assert.equal(next.current, 1);
 		assert.ok(next.log.some((e) => e.type === "noble" && e.noble === noble44.id));
+		const visits = next.messages.filter((m) => m.includes("visits"));
+		assert.equal(visits.length, 1, "exactly one chat message for the noble visit");
+		assert.ok(visits[0]?.includes(noble44.name) && visits[0].includes("+3 prestige"));
 	});
 
 	it("requires a choice when several nobles are eligible", () => {
@@ -77,6 +80,9 @@ describe("nobles", () => {
 		assert.deepEqual(visited.players[0]?.nobles, [noble333.id]);
 		assert.equal(visited.nobles.length, 1);
 		assert.equal(visited.current, 1);
+		const visits = visited.messages.filter((m) => m.includes("visits"));
+		assert.equal(visits.length, 1, "chosen noble visit posts a single chat message, not a duplicate");
+		assert.ok(visits[0]?.includes(noble333.name));
 		assert.deepEqual(
 			pendingNoblesFor(visited, 0),
 			[noble44.id],

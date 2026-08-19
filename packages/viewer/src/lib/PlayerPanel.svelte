@@ -184,4 +184,25 @@
 	.my-reserved {
 		margin-top: 4px;
 	}
+
+	@media (max-width: 720px) {
+		.panel {
+			min-width: 0;
+			padding: 6px 8px;
+			gap: 4px;
+		}
+		.avatar {
+			width: 24px;
+			height: 24px;
+		}
+		.head {
+			gap: 6px;
+		}
+		.name {
+			font-size: 13px;
+		}
+		.prestige {
+			font-size: 14px;
+		}
+	}
 </style>
