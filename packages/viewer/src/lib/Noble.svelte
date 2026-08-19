@@ -43,7 +43,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: calc(var(--noble) * 0.04);
+		justify-content: space-between;
 		position: relative;
 		user-select: none;
 		overflow: hidden;
@@ -52,20 +52,18 @@
 			box-shadow 0.16s ease;
 	}
 	.points {
-		position: absolute;
-		top: calc(var(--noble) * 0.05);
-		left: calc(var(--noble) * 0.07);
+		align-self: flex-start;
 		font-size: calc(var(--noble) * 0.18);
 		font-weight: 800;
 		line-height: 1;
 		color: var(--gold);
 	}
 	.name {
-		/* sits under the points badge, centered across the tile */
-		margin-top: calc(var(--noble) * 0.2);
-		font-size: calc(var(--noble) * 0.11);
+		/* vertically centered between the points badge and the gems (flex column + space-between) */
+		font-size: calc(var(--noble) * 0.15);
 		line-height: 1.1;
-		color: var(--text-dim);
+		color: var(--text);
+		opacity: 0.9;
 		text-align: center;
 		max-width: 100%;
 		overflow: hidden;
@@ -73,8 +71,6 @@
 		white-space: nowrap;
 	}
 	.reqs {
-		/* pinned to the bottom so wrapped gems never overflow the tile */
-		margin-top: auto;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
