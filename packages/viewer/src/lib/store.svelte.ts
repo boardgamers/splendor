@@ -16,7 +16,7 @@ import {
 	type Move,
 	type Tier,
 } from "splendor-engine";
-import type { ViewerBridge } from "./bgs";
+import type { ViewerBridge } from "./bgs.svelte";
 
 export interface ReplayState {
 	active: boolean;

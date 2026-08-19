@@ -1,6 +1,6 @@
 import { mount } from "svelte";
 import App from "./App.svelte";
-import { launchBridge } from "./lib/bgs";
+import { launchBridge } from "./lib/bgs.svelte";
 import { createStore } from "./lib/store.svelte";
 import type { Emitter } from "./lib/emitter";
 import "./lib/theme.css";

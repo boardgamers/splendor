@@ -1,6 +1,22 @@
 import type { GameState, Move } from "splendor-engine";
 import { Emitter } from "./emitter";
 
+// Uplink payloads can be Svelte $state proxies (e.g. the logLines array). The
+// BGS shim re-posts whatever we emit straight to the parent via postMessage,
+// whose structured clone throws "Proxy object could not be cloned" on proxies.
+// Deep-unwrap at the emit boundary so nothing downstream ever sees a proxy.
+function declone<T>(value: T): T {
+	try {
+		return $state.snapshot(value) as T;
+	} catch {
+		try {
+			return value === undefined ? value : (JSON.parse(JSON.stringify(value)) as T);
+		} catch {
+			return value;
+		}
+	}
+}
+
 export interface ViewerEvents {
 	state: GameState;
 	"state:updated": void;
@@ -38,36 +54,40 @@ export class ViewerBridge {
 		return this.events.on(event, listener);
 	}
 
+	private emitUplink<K extends keyof UplinkEvents>(event: K, payload?: UplinkEvents[K]): void {
+		this.events.emit(event, declone(payload));
+	}
+
 	sendMove(move: Move): void {
-		this.events.emit("move", { move });
+		this.emitUplink("move", { move });
 	}
 
 	ready(): void {
-		this.events.emit("ready");
+		this.emitUplink("ready");
 	}
 
 	replaceLog(lines: string[]): void {
-		this.events.emit("replaceLog", lines);
+		this.emitUplink("replaceLog", lines);
 	}
 
 	fetchState(): void {
-		this.events.emit("fetchState");
+		this.emitUplink("fetchState");
 	}
 
 	replayInfo(info: { start: number; current: number; end: number }): void {
-		this.events.emit("replay:info", info);
+		this.emitUplink("replay:info", info);
 	}
 
 	playerClicked(index: number): void {
-		this.events.emit("player:clicked", { index });
+		this.emitUplink("player:clicked", { index });
 	}
 
 	updatePreference(name: string, value: string | boolean | null): void {
-		this.events.emit("update:preference", { name, value });
+		this.emitUplink("update:preference", { name, value });
 	}
 
 	fetchLog(start: number, end?: number): void {
-		this.events.emit("fetchLog", { start, end });
+		this.emitUplink("fetchLog", { start, end });
 	}
 }
 
