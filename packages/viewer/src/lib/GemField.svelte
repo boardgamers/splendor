@@ -41,14 +41,15 @@
 				<path d="M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78" />
 			</g>
 		</symbol>
-		<!-- Cushion cut: rounded-square girdle, square table, radiating facets to
-		     the corners and edge midpoints. -->
+		<!-- Round gem, top view: octagonal girdle, square table, and the radiating
+		     bezel facets that make it read as faceted. -->
 		<symbol id="cushion" viewBox="0 0 100 100" overflow="visible">
 			<g>
-				<path d="M50 10 C70 10 90 30 90 50 C90 70 70 90 50 90 C30 90 10 70 10 50 C10 30 30 10 50 10 Z" />
-				<path d="M50 28 L72 50 L50 72 L28 50 Z" />
-				<path d="M50 10 L50 28 M90 50 L72 50 M50 90 L50 72 M10 50 L28 50" />
-				<path d="M28 28 L40 40 M72 28 L60 40 M72 72 L60 60 M28 72 L40 60" />
+				<path d="M50 8 L80 20 L92 50 L80 80 L50 92 L20 80 L8 50 L20 20 Z" />
+				<path d="M36 36 L64 36 L64 64 L36 64 Z" />
+				<path
+					d="M50 8 L50 36 M80 20 L64 36 M92 50 L64 50 M80 80 L64 64 M50 92 L50 64 M20 80 L36 64 M8 50 L36 50 M20 20 L36 36"
+				/>
 			</g>
 		</symbol>
 		<!-- Pear cut: teardrop girdle, inner teardrop table, radiating facets. -->
