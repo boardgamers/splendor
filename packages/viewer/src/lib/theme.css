@@ -100,11 +100,15 @@ html.dark {
 	box-sizing: border-box;
 }
 
-html {
-	/* The jewel-tone glows + base color live on <html>, full-viewport and fixed.
-	   The gem watermarks are a separate inline SVG layer (GemField.svelte), not
-	   a CSS background — background-image can only tile, which made the gems
-	   overlap in a rigid grid. */
+/* The jewel-tone glows + base color live on <html>, full-viewport and fixed.
+   The gem watermarks are a separate inline SVG layer (GemField.svelte), not a
+   CSS background — background-image can only tile, which made the gems overlap
+   in a rigid grid.
+   `:root:root` and not plain `html` on purpose: the BGS iframe shell injects
+   `<style>html.dark { background: #030712 }</style>` (anti-flash) after the
+   viewer stylesheet, so at equal specificity it would win in dark mode and wipe
+   out the decor. The doubled `:root` outranks `html.dark`. */
+:root:root {
 	background: var(--bg-decor);
 	background-attachment: fixed;
 }
