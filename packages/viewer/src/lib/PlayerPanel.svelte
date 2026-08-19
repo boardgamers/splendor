@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GEM_COLORS, type GameState } from "splendor-engine";
+	import { GEM_COLORS, PRESTIGE_TARGET, type GameState } from "splendor-engine";
 	import { playerColor } from "splendor-engine";
 	import type { ViewerStore } from "./store.svelte";
 	import GemChip from "./GemChip.svelte";
@@ -23,6 +23,11 @@
 	const bonusOf = (color: (typeof GEM_COLORS)[number]) => bonus[color];
 	const avatar = $derived(store.avatars[index]);
 	const initial = $derived((player.name.trim()[0] ?? "?").toUpperCase());
+
+	function ordinal(i: number): string {
+		const n = i + 1;
+		return n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th";
+	}
 </script>
 
 <div
@@ -34,14 +39,24 @@
 >
 	<div class="head">
 		<button class="identity" onclick={() => onNameClick?.(index)} title={player.name}>
+			<span class="order" title="turn order — plays {index + 1}{ordinal(index)}">{index + 1}</span>
 			{#if avatar}
 				<img class="avatar" src={avatar} alt="" referrerpolicy="no-referrer" />
 			{:else}
 				<span class="avatar fallback" style="--pc: {playerColor(index)}">{initial}</span>
 			{/if}
 			<span class="name">{player.name}</span>
+			{#if index === state.lastPlayer && !state.ended}
+				<span
+					class="closer"
+					title="last in turn order — the round ends after this player (and the game, once someone reaches {PRESTIGE_TARGET} prestige)"
+					>⊣</span
+				>
+			{/if}
 		</button>
-		<span class="prestige">{store.prestigeOf(index)}</span>
+		<span class="prestige" title="prestige — first to {PRESTIGE_TARGET} triggers the final round">
+			{store.prestigeOf(index)}<span class="target">/{PRESTIGE_TARGET}</span>
+		</span>
 	</div>
 
 	<div class="row gems">
@@ -171,6 +186,31 @@
 		font-weight: 800;
 		color: var(--gold);
 		font-size: 16px;
+	}
+	.prestige .target {
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--text-dim);
+	}
+	.order {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--pc) 25%, var(--bg-elevated));
+		border: 1px solid var(--pc);
+		color: var(--text);
+		font-size: 10px;
+		font-weight: 800;
+		flex-shrink: 0;
+	}
+	.closer {
+		color: var(--text-dim);
+		font-size: 13px;
+		font-weight: 700;
+		margin-left: 2px;
 	}
 	.row {
 		display: flex;
