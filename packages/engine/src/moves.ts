@@ -344,6 +344,11 @@ function validate(state: GameState, move: Move, playerIndex: number): void {
 			}
 			return;
 		}
+		default:
+			// Reject unknown/undefined actions (e.g. a malformed or double-wrapped
+			// move) instead of falling through — otherwise applyMove would log a
+			// no-op move and advance the turn, corrupting the game log.
+			fail(`unknown move action ${(move as { action?: unknown }).action}`);
 	}
 }
 

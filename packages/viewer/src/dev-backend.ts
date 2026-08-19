@@ -95,12 +95,12 @@ export function startDevBackend(
 		}, delay);
 	}
 
-	emitter.on("move", ((payload: { move: Move }) => {
+	emitter.on("move", ((move: Move) => {
 		if (state.ended) {
 			return;
 		}
 		try {
-			state = applyMove(state, payload.move, human);
+			state = applyMove(state, move, human);
 		} catch (error) {
 			console.error("[dev-backend] illegal move", error);
 			return;

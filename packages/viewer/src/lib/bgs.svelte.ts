@@ -31,7 +31,10 @@ export interface ViewerEvents {
 
 export interface UplinkEvents {
 	ready: void;
-	move: { move: Move };
+	// The shim relays the emitted payload verbatim as the gameMove's `move` field,
+	// so it must be the move object itself — not wrapped in { move } (that would
+	// double-wrap it and the engine would read move.action === undefined).
+	move: Move;
 	fetchState: void;
 	fetchLog: { start: number; end?: number };
 	addLog: string[];
@@ -59,7 +62,7 @@ export class ViewerBridge {
 	}
 
 	sendMove(move: Move): void {
-		this.emitUplink("move", { move });
+		this.emitUplink("move", move);
 	}
 
 	ready(): void {

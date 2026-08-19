@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { describeLog } from "./describe.js";
 import { applyMove } from "./moves.js";
 import { setup } from "./state.js";
 import { GEM_COLORS } from "./types.js";
@@ -23,6 +24,28 @@ describe("take gems", () => {
 		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "onyx"] }, 0), /3 different/);
 		assert.throws(() => applyMove(state, { action: "take", gems: [] }, 0), /1 to 3/);
 		assert.throws(() => applyMove(state, { action: "take", gems: ["ruby", "onyx", "gold"] as never }, 0));
+	});
+
+	it("rejects a malformed (double-wrapped) move without mutating state or logging", () => {
+		const state = setup(2, {}, "take-malformed");
+		const logBefore = state.log.length;
+		const tokensBefore = { ...state.players[0]!.tokens };
+		// { move: { action: "take", ... } } — the shape a buggy viewer produced.
+		const malformed = { move: { action: "take", gems: ["ruby", "onyx", "diamond"] } } as never;
+		assert.throws(() => applyMove(state, malformed, 0), /unknown move action/);
+		assert.equal(state.log.length, logBefore, "no log entry for a rejected move");
+		assert.deepEqual(state.players[0]!.tokens, tokensBefore, "no token change for a rejected move");
+		assert.equal(state.current, 0, "turn does not advance on a rejected move");
+	});
+
+	it("describeLog tolerates a legacy double-wrapped move entry", () => {
+		const state = setup(2, {}, "take-legacy");
+		state.log.push({ type: "move", player: 0, move: { move: { action: "take", gems: ["ruby"] } } } as never);
+		const lines = describeLog(state, state.log);
+		assert.ok(
+			lines.some((l) => l.includes("takes")),
+			"unwraps and describes the nested move"
+		);
 	});
 
 	it("allows a reduced take only when fewer bank colors remain", () => {
