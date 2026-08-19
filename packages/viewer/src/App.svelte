@@ -33,54 +33,61 @@
 		<ReplayBar {store} />
 		<GameEndBanner {store} />
 
-		<div class="top">
-			<div class="players">
-				{#each state.players as _, i (i)}
-					<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
-				{/each}
-			</div>
-		</div>
+		<div class="columns">
+			<div class="main">
+				<div class="top">
+					<div class="players">
+						{#each state.players as _, i (i)}
+							<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
+						{/each}
+					</div>
+				</div>
 
-		<div class="nobles-row">
-			{#each state.nobles as nobleId (nobleId)}
-				<Noble
-					{nobleId}
-					selectable={store.myTurn && store.pendingNobleChoice.includes(nobleId)}
-					onclick={() => store.chooseNoble(nobleId)}
-				/>
-			{/each}
-		</div>
-
-		{#each tierRows as row (row.tier)}
-			<div class="tier-row">
-				<Deck
-					tier={row.tier}
-					count={row.deckCount}
-					selectable={store.myTurn && store.reserving && store.canReserveAtAll()}
-					onclick={() => store.clickDeck(row.tier)}
-				/>
-				{#each row.cards as cardId, i (i)}
-					{#if cardId >= 0}
-						<Card
-							{cardId}
-							affordable={store.myTurn && store.affordable(cardId)}
-							selectable={store.myTurn && (store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
-							onclick={() => store.clickCard(cardId, "table")}
+				<div class="nobles-row">
+					{#each state.nobles as nobleId (nobleId)}
+						<Noble
+							{nobleId}
+							selectable={store.myTurn && store.pendingNobleChoice.includes(nobleId)}
+							onclick={() => store.chooseNoble(nobleId)}
 						/>
-					{:else}
-						<!-- -1: an unknown card drawn from the deck as a replacement after an
-						     optimistic buy/reserve on the stripped view — show a face-down slot. -->
-						<div class="card-placeholder tier-{row.tier}"></div>
-					{/if}
+					{/each}
+				</div>
+
+				{#each tierRows as row (row.tier)}
+					<div class="tier-row">
+						<Deck
+							tier={row.tier}
+							count={row.deckCount}
+							selectable={store.myTurn && store.reserving && store.canReserveAtAll()}
+							onclick={() => store.clickDeck(row.tier)}
+						/>
+						{#each row.cards as cardId, i (i)}
+							{#if cardId >= 0}
+								<Card
+									{cardId}
+									affordable={store.myTurn && store.affordable(cardId)}
+									selectable={store.myTurn &&
+										(store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
+									onclick={() => store.clickCard(cardId, "table")}
+								/>
+							{:else}
+								<!-- -1: an unknown card drawn from the deck as a replacement after an
+								     optimistic buy/reserve on the stripped view — show a face-down slot. -->
+								<div class="card-placeholder tier-{row.tier}"></div>
+							{/if}
+						{/each}
+					</div>
 				{/each}
 			</div>
-		{/each}
 
-		<div class="action-zone">
-			<Bank {state} {store} />
-			<ActionBar {store} />
+			<div class="side">
+				<div class="action-zone">
+					<Bank {state} {store} />
+					<ActionBar {store} />
+				</div>
+				<LogFeed {store} />
+			</div>
 		</div>
-		<LogFeed {store} />
 	</div>
 {:else}
 	<div class="loading">Waiting for game state…</div>
@@ -127,17 +134,46 @@
 		gap: 10px;
 		flex-wrap: wrap;
 	}
+	/* Default (narrow): single column, board stacked above the action zone. */
+	.columns {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+	.main {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		min-width: 0;
+	}
+	.side {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		min-width: 0;
+	}
+	/* Wide screens: two columns — the board (players/nobles/tiers) on the left,
+	   bank + action bar + event feed in a fixed right sidebar — so the space is
+	   used instead of a one-sided gutter. The sidebar sticks for easy access. */
+	@media (min-width: 1100px) {
+		.columns {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 20px;
+		}
+		.main {
+			flex: 1 1 auto;
+		}
+		.side {
+			flex: 0 0 360px;
+			position: sticky;
+			top: 16px;
+		}
+	}
 	.tier-row {
 		display: flex;
 		gap: 12px;
 		align-items: center;
-	}
-	/* On wide screens spread the deck + cards across the full board width so the
-	   row fills the space instead of clustering left. Capped so gaps stay sane. */
-	@media (min-width: 900px) {
-		.tier-row {
-			justify-content: space-evenly;
-		}
 	}
 	/* Face-down slot for a -1 placeholder (unknown replacement card on the
 	   stripped view after an optimistic buy/reserve). Matches the card size. */

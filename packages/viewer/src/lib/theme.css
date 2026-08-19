@@ -39,26 +39,16 @@ html.dark {
 	--noble-text: #e8e6e0;
 }
 
-/* Scale the board up on large screens so it fills the available width instead
-   of leaving a wide empty gutter beside a fixed-size board. */
-@media (min-width: 1100px) {
+/* Slightly larger pieces on large screens (the two-column layout fills the
+   width; this just keeps the cards from feeling small on a big monitor). */
+@media (min-width: 1500px) {
 	:root {
-		--card-w: 100px;
-		--card-h: 138px;
+		--card-w: 96px;
+		--card-h: 132px;
 		--chip: 38px;
 		--chip-small: 27px;
 		--chip-mini: 20px;
-		--noble: 108px;
-	}
-}
-@media (min-width: 1500px) {
-	:root {
-		--card-w: 112px;
-		--card-h: 154px;
-		--chip: 42px;
-		--chip-small: 30px;
-		--chip-mini: 22px;
-		--noble: 120px;
+		--noble: 104px;
 	}
 }
 
