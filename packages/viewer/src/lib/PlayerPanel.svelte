@@ -20,6 +20,7 @@
 	const isMe = $derived(store.playerIndex === index);
 	const bonus = $derived(store.bonusesOf(index));
 	const bonusList = $derived(GEM_COLORS.map((c) => ({ color: c, n: bonus[c] })).filter((x) => x.n > 0));
+	const bonusOf = (color: (typeof GEM_COLORS)[number]) => bonus[color];
 	const avatar = $derived(store.avatars[index]);
 	const initial = $derived((player.name.trim()[0] ?? "?").toUpperCase());
 </script>
@@ -43,24 +44,30 @@
 		<span class="prestige">{store.prestigeOf(index)}</span>
 	</div>
 
-	<div class="row tokens">
+	<div class="row gems">
 		{#each GEM_COLORS as color (color)}
-			{#if player.tokens[color] > 0}
-				<GemChip {color} count={player.tokens[color]} size="small" />
+			{@const tokens = player.tokens[color]}
+			{@const bonus = bonusOf(color)}
+			{#if tokens > 0 || bonus > 0}
+				<span
+					class="gem-col"
+					title="{color}: {tokens} token{tokens === 1 ? '' : 's'}{bonus > 0 ? ` + ${bonus} card bonus` : ''}"
+				>
+					<GemChip {color} count={tokens} size="small" dimmed={tokens === 0} />
+					{#if bonus > 0}
+						<span class="bonus-badge gem-{color}">{bonus}</span>
+					{/if}
+				</span>
 			{/if}
 		{/each}
 		{#if player.tokens.gold > 0}
-			<GemChip color="gold" count={player.tokens.gold} size="small" />
+			<span class="gem-col" title="gold: {player.tokens.gold}">
+				<GemChip color="gold" count={player.tokens.gold} size="small" />
+			</span>
 		{/if}
-		{#if store.tokensOf(index) === 0}
+		{#if store.tokensOf(index) === 0 && bonusList.length === 0}
 			<span class="none">no gems</span>
 		{/if}
-	</div>
-
-	<div class="row bonuses">
-		{#each bonusList as b (b.color)}
-			<GemChip color={b.color} count={b.n} size="mini" />
-		{/each}
 		{#if player.nobles.length > 0}
 			<span class="nobles" title="nobles">♛ {player.nobles.length}</span>
 		{/if}
@@ -171,6 +178,39 @@
 		align-items: center;
 		flex-wrap: wrap;
 		min-height: 20px;
+	}
+	/* Each gem color is one column: the round token chip plus, when the player
+	   owns cards of that color, a small square bonus badge (matching the card
+	   bonus pip) showing how many permanent gems those cards provide. */
+	.gem-col {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+	}
+	.bonus-badge {
+		position: absolute;
+		bottom: -4px;
+		right: -5px;
+		min-width: 14px;
+		height: 14px;
+		padding: 0 2px;
+		border-radius: 3px;
+		background: var(--gem);
+		border: 1px solid color-mix(in srgb, var(--gem) 55%, #000);
+		color: #fff;
+		font-size: 9px;
+		font-weight: 800;
+		line-height: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+		pointer-events: none;
+	}
+	/* light gems need dark badge text */
+	.bonus-badge.gem-diamond {
+		color: #2a2a2a;
+		text-shadow: none;
 	}
 	.none {
 		color: var(--text-dim);
