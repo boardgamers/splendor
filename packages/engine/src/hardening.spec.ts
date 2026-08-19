@@ -83,15 +83,24 @@ describe("untrusted move input hardening", () => {
 		rejectsCleanly(state, { action: "swap", give: "ruby", receive: 5 }, /valid gem colors/);
 	});
 
+	it("rejects moves carrying unexpected extra fields", () => {
+		const state = setup(2, {}, "harden-extra");
+		rejectsCleanly(state, { action: "take", gems: ["ruby"], extra: "junk" }, /unexpected field "extra"/);
+		rejectsCleanly(state, { action: "buy", cardId: 5, nobleId: 9 }, /unexpected field "nobleId"/);
+		rejectsCleanly(state, { action: "take2", color: "ruby", gems: ["ruby"] }, /unexpected field "gems"/);
+		rejectsCleanly(state, JSON.parse('{"action":"noble","nobleId":1,"polluted":true}'), /unexpected field "polluted"/);
+	});
+
 	it("stores a plain sanitized object in the log, not the caller's object", () => {
 		const state = setup(2, {}, "harden-log");
-		const hostile = { action: "take", gems: ["ruby", "onyx", "diamond"], extra: "junk" } as never;
-		applyMove(state, hostile, 0);
+		const source = { action: "take", gems: ["ruby", "onyx", "diamond"] };
+		applyMove(state, source as never, 0);
 		const entry = state.log.at(-1);
 		assert.equal(entry?.type, "move");
 		const logged = (entry as { move: Record<string, unknown> }).move;
-		assert.deepEqual(logged, { action: "take", gems: ["ruby", "onyx", "diamond"] }, "extra fields stripped");
-		assert.notEqual(logged, hostile, "log holds a fresh object, not the caller's");
+		assert.deepEqual(logged, { action: "take", gems: ["ruby", "onyx", "diamond"] });
+		assert.notEqual(logged, source, "log holds a fresh object, not the caller's");
+		assert.notEqual(logged.gems, source.gems, "gems array is a copy, not the caller's");
 	});
 
 	it("does not pollute prototypes via a crafted move", () => {

@@ -46,6 +46,17 @@ function isCardId(value: unknown): value is number {
 	return typeof value === "number" && Number.isInteger(value) && value >= 0;
 }
 
+// Allowed keys per action — anything else on the payload is rejected outright,
+// so a malformed move is always an error rather than silently ignoring a field.
+const MOVE_KEYS: Record<string, readonly string[]> = Object.assign(Object.create(null), {
+	take: ["action", "gems"],
+	take2: ["action", "color"],
+	reserve: ["action", "cardId", "tier"],
+	buy: ["action", "cardId"],
+	noble: ["action", "nobleId"],
+	swap: ["action", "give", "receive"],
+});
+
 function sanitizeMove(raw: unknown): Move {
 	if (!isPlainObject(raw)) {
 		fail("move must be a plain object");
@@ -53,6 +64,17 @@ function sanitizeMove(raw: unknown): Move {
 	const action = raw.action;
 	if (typeof action !== "string") {
 		fail("move.action must be a string");
+	}
+	// MOVE_KEYS is a null-prototype object, so "__proto__"/"constructor" actions
+	// look up as undefined (no Object.prototype inheritance) and are rejected here.
+	const allowed = MOVE_KEYS[action];
+	if (!allowed) {
+		fail(`unknown move action ${action}`);
+	}
+	for (const key of Object.keys(raw)) {
+		if (!allowed.includes(key)) {
+			fail(`unexpected field "${key}" on a ${action} move`);
+		}
 	}
 	switch (action) {
 		case "take": {
