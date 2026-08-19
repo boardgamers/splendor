@@ -388,6 +388,8 @@ export class ViewerStore {
 		}
 		// Reserving blind from a deck can't be applied on the stripped view (decks
 		// are -1 placeholders) — skip the optimistic step and wait for the server.
+		// (Table buys/reserves draw a -1 replacement onto the table; the board
+		// renders those as face-down placeholders, so they're safe to apply.)
 		if (move.action === "reserve" && move.cardId === undefined) {
 			return;
 		}

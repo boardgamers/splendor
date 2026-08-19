@@ -59,13 +59,19 @@
 					selectable={store.myTurn && store.reserving && store.canReserveAtAll()}
 					onclick={() => store.clickDeck(row.tier)}
 				/>
-				{#each row.cards as cardId (cardId)}
-					<Card
-						{cardId}
-						affordable={store.myTurn && store.affordable(cardId)}
-						selectable={store.myTurn && (store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
-						onclick={() => store.clickCard(cardId, "table")}
-					/>
+				{#each row.cards as cardId, i (i)}
+					{#if cardId >= 0}
+						<Card
+							{cardId}
+							affordable={store.myTurn && store.affordable(cardId)}
+							selectable={store.myTurn && (store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
+							onclick={() => store.clickCard(cardId, "table")}
+						/>
+					{:else}
+						<!-- -1: an unknown card drawn from the deck as a replacement after an
+						     optimistic buy/reserve on the stripped view — show a face-down slot. -->
+						<div class="card-placeholder tier-{row.tier}"></div>
+					{/if}
 				{/each}
 			</div>
 		{/each}
@@ -121,6 +127,25 @@
 		display: flex;
 		gap: 12px;
 		align-items: center;
+	}
+	/* Face-down slot for a -1 placeholder (unknown replacement card on the
+	   stripped view after an optimistic buy/reserve). Matches the card size. */
+	.card-placeholder {
+		width: var(--card-w);
+		height: var(--card-h);
+		border-radius: 8px;
+		border: 1px solid rgba(0, 0, 0, 0.35);
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+		flex-shrink: 0;
+	}
+	.card-placeholder.tier-1 {
+		background: linear-gradient(150deg, #3d5a43, #2c4231);
+	}
+	.card-placeholder.tier-2 {
+		background: linear-gradient(150deg, #6d5a2c, #4f411f);
+	}
+	.card-placeholder.tier-3 {
+		background: linear-gradient(150deg, #5d3a4e, #452b39);
 	}
 	/* Keep cards at natural size; if a row is genuinely too wide, scroll it
 	   horizontally instead of flex-shrinking cards into tall slivers. */

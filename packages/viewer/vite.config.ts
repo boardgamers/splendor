@@ -7,6 +7,7 @@ export default defineConfig(({ command }) => ({
 		outDir: "dist",
 		emptyOutDir: true,
 		cssCodeSplit: false,
+		sourcemap: true,
 		lib: {
 			entry: "src/viewer.ts",
 			name: "splendor",

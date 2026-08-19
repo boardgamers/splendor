@@ -26,7 +26,9 @@
 	onkeydown={selectable && onclick ? (e) => e.key === "Enter" && onclick() : undefined}
 >
 	<div class="top">
-		{#if card.points > 0}<span class="points">{card.points}</span>{/if}
+		<!-- Always render the points slot (invisible when 0) so the bonus pip stays
+		     right-aligned whether or not the card has prestige points. -->
+		<span class="points" class:invisible={card.points === 0}>{card.points > 0 ? card.points : 0}</span>
 		<span class="bonus gem-{card.bonus}"></span>
 	</div>
 	<div class="costs">
@@ -92,6 +94,9 @@
 		font-size: 20px;
 		font-weight: 800;
 		color: #2a2418;
+	}
+	.points.invisible {
+		visibility: hidden;
 	}
 	.bonus {
 		width: 22px;
