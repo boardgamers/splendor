@@ -46,7 +46,6 @@
 		border: 1px solid var(--gold);
 		border-radius: var(--radius);
 		padding: 16px 20px;
-		margin-bottom: 14px;
 	}
 	h2 {
 		margin: 0 0 4px;

@@ -34,61 +34,64 @@
 {#if state}
 	<div class="board" class:compact={store.preferences.compactCards === true}>
 		<ReplayBar {store} />
-		<GameEndBanner {store} />
 
-		<div class="columns">
-			<div class="main">
-				<div class="top">
-					<div class="players" data-count={state.players.length}>
-						{#each state.players as _, i (i)}
-							<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
+		<div class="page">
+			<GameEndBanner {store} />
+
+			<div class="columns">
+				<div class="main">
+					<div class="top">
+						<div class="players" data-count={state.players.length}>
+							{#each state.players as _, i (i)}
+								<PlayerPanel {state} {store} index={i} onNameClick={onPlayerClick} />
+							{/each}
+						</div>
+					</div>
+
+					<div class="nobles-row">
+						{#each state.nobles as nobleId (nobleId)}
+							<Noble
+								{nobleId}
+								selectable={store.myTurn && store.pendingNobleChoice.includes(nobleId)}
+								onclick={() => store.chooseNoble(nobleId)}
+							/>
 						{/each}
 					</div>
-				</div>
 
-				<div class="nobles-row">
-					{#each state.nobles as nobleId (nobleId)}
-						<Noble
-							{nobleId}
-							selectable={store.myTurn && store.pendingNobleChoice.includes(nobleId)}
-							onclick={() => store.chooseNoble(nobleId)}
-						/>
+					{#each tierRows as row (row.tier)}
+						<div class="tier-row">
+							<Deck
+								tier={row.tier}
+								count={row.deckCount}
+								selectable={store.myTurn && store.reserving && store.canReserveAtAll()}
+								onclick={() => store.clickDeck(row.tier)}
+							/>
+							{#each row.cards as cardId, i (i)}
+								{#if cardId >= 0}
+									<Card
+										{cardId}
+										affordable={store.myTurn && store.affordable(cardId)}
+										selectable={store.myTurn &&
+											(store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
+										onclick={() => store.clickCard(cardId, "table")}
+									/>
+								{:else}
+									<!-- -1: an unknown card drawn from the deck as a replacement after an
+								     optimistic buy/reserve on the stripped view — show a face-down slot. -->
+									<div class="card-placeholder tier-{row.tier}"></div>
+								{/if}
+							{/each}
+						</div>
 					{/each}
 				</div>
 
-				{#each tierRows as row (row.tier)}
-					<div class="tier-row">
-						<Deck
-							tier={row.tier}
-							count={row.deckCount}
-							selectable={store.myTurn && store.reserving && store.canReserveAtAll()}
-							onclick={() => store.clickDeck(row.tier)}
-						/>
-						{#each row.cards as cardId, i (i)}
-							{#if cardId >= 0}
-								<Card
-									{cardId}
-									affordable={store.myTurn && store.affordable(cardId)}
-									selectable={store.myTurn &&
-										(store.affordable(cardId) || (store.reserving && store.canReserveAtAll()))}
-									onclick={() => store.clickCard(cardId, "table")}
-								/>
-							{:else}
-								<!-- -1: an unknown card drawn from the deck as a replacement after an
-								     optimistic buy/reserve on the stripped view — show a face-down slot. -->
-								<div class="card-placeholder tier-{row.tier}"></div>
-							{/if}
-						{/each}
+				<div class="side">
+					<div class="action-zone">
+						<Bank {state} {store} />
+						<ActionBar {store} />
 					</div>
-				{/each}
-			</div>
-
-			<div class="side">
-				<div class="action-zone">
-					<Bank {state} {store} />
-					<ActionBar {store} />
+					<LogFeed {store} />
 				</div>
-				<LogFeed {store} />
 			</div>
 		</div>
 	</div>
@@ -155,6 +158,11 @@
 		flex-wrap: wrap;
 	}
 	/* Default (narrow): single column, board stacked above the action zone. */
+	.page {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
 	.columns {
 		display: flex;
 		flex-direction: column;
@@ -177,6 +185,14 @@
 	   hugs the board content width (the tier rows are its widest element) and the
 	   whole group is centered, so there's no dead gap between the columns. */
 	@media (min-width: 1100px) {
+		/* Shrink-wrap the whole group (banner + columns) to the columns' width and
+		   center it, so the end-game banner is exactly as wide as the two columns
+		   below instead of stretching to the board's max-width. */
+		.page {
+			width: fit-content;
+			margin: 0 auto;
+			align-items: stretch;
+		}
 		.columns {
 			flex-direction: row;
 			align-items: flex-start;

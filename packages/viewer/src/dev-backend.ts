@@ -6,6 +6,9 @@ export interface DevOptions {
 	seed?: string;
 	delayMs?: number;
 	hideReserved?: boolean;
+	/* When true, the human seat also auto-plays random legal moves — the whole
+	   game plays itself out (handy for reaching the end screen in dev). */
+	auto?: boolean;
 }
 
 const NAMES = ["You", "Ada (bot)", "Cleo (bot)", "Dora (bot)"];
@@ -78,7 +81,7 @@ export function startDevBackend(
 			return;
 		}
 		const current = state.current;
-		if (current === human) {
+		if (current === human && !options.auto) {
 			return;
 		}
 		window.setTimeout(() => {

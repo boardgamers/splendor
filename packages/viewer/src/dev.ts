@@ -5,9 +5,10 @@ const params = new URLSearchParams(window.location.search);
 const players = Math.min(4, Math.max(2, Number(params.get("players") ?? 2)));
 const seed = params.get("seed") ?? undefined;
 const hideReserved = params.get("hideReserved") === "1" || params.get("hideReserved") === "true";
+const auto = params.get("auto") === "1" || params.get("auto") === "true";
 
 const emitter = launch("#app");
-startDevBackend(emitter as never, { players, seed, hideReserved });
+startDevBackend(emitter as never, { players, seed, hideReserved, auto });
 
 // Dev-harness theme control: default to the system theme, and add a small
 // toggle button that re-emits "theme" on the emitter exactly like the BGS shim
