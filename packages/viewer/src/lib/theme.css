@@ -19,15 +19,16 @@
 		radial-gradient(50vmax 50vmax at 108% -4%, rgba(46, 158, 91, 0.26), transparent 62%),
 		radial-gradient(48vmax 48vmax at -4% 108%, rgba(210, 64, 60, 0.22), transparent 62%),
 		radial-gradient(52vmax 52vmax at 108% 108%, rgba(184, 145, 42, 0.3), transparent 62%), var(--bg);
-	/* Ghost gem watermark: three organic gem cuts (round brilliant, pear,
-	   marquise) scattered at varied sizes/positions behind everything. Inline SVG
-	   data-URIs; dark on light. */
+	/* Ghost gem watermark: four gem cuts (round brilliant, pear, marquise,
+	   emerald step-cut) scattered at varied sizes/positions behind everything.
+	   Inline SVG data-URIs; dark on light. */
 	--gem-watermark:
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.05' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M25 35 L40 20 L60 20 L75 35 L50 78 Z'/%3E%3Cpath d='M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78'/%3E%3C/g%3E%3C/svg%3E"),
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='460' height='460' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.04' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 18 C66 18 76 32 76 46 C76 62 63 78 50 84 C37 78 24 62 24 46 C24 32 34 18 50 18 Z'/%3E%3Cpath d='M30 44 L70 44 M50 18 L50 84'/%3E%3C/g%3E%3C/svg%3E"),
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.045' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 16 C64 30 74 44 74 56 C74 72 63 84 50 84 C37 84 26 72 26 56 C26 44 36 30 50 16 Z'/%3E%3Cpath d='M28 54 L72 54'/%3E%3C/g%3E%3C/svg%3E");
-	--gem-watermark-size: 200px 200px, 460px 460px, 320px 320px;
-	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%;
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='460' height='460' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.04' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 14 C68 14 78 28 78 44 C78 62 64 80 50 86 C36 80 22 62 22 44 C22 28 32 14 50 14 Z'/%3E%3Cpath d='M22 44 L78 44'/%3E%3Cpath d='M50 14 L50 44 M35 18 L41 44 M65 18 L59 44'/%3E%3Cpath d='M22 44 L50 86 M41 44 L50 86 M59 44 L50 86 M78 44 L50 86'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.045' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 12 C66 26 76 40 76 54 C76 72 64 88 50 88 C36 88 24 72 24 54 C24 40 34 26 50 12 Z'/%3E%3Cpath d='M24 54 L76 54'/%3E%3Cpath d='M50 12 L50 88 M24 54 L50 88 M76 54 L50 88 M24 54 L50 12 M76 54 L50 12'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2326241d' stroke-opacity='0.042' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-18 50 50)'%3E%3Cpath d='M36 14 L64 14 L82 32 L82 68 L64 86 L36 86 L18 68 L18 32 Z'/%3E%3Cpath d='M42 24 L58 24 L72 38 L72 62 L58 76 L42 76 L28 62 L28 38 Z'/%3E%3Cpath d='M46 34 L54 34 L62 42 L62 58 L54 66 L46 66 L38 58 L38 42 Z'/%3E%3Cpath d='M36 14 L42 24 M64 14 L58 24 M82 32 L72 38 M82 68 L72 62 M64 86 L58 76 M36 86 L42 76 M18 68 L28 62 M18 32 L28 38'/%3E%3C/g%3E%3C/svg%3E");
+	--gem-watermark-size: 200px 200px, 460px 460px, 320px 320px, 380px 380px;
+	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%, 22% 62%;
 	--diamond: #e9edf2;
 	--sapphire: #2f6fd6;
 	--emerald: #2e9e5b;
@@ -62,15 +63,15 @@ html.dark {
 		radial-gradient(55vmax 55vmax at 110% -5%, rgba(46, 158, 91, 0.18), transparent 60%),
 		radial-gradient(50vmax 50vmax at -5% 110%, rgba(210, 64, 60, 0.16), transparent 60%),
 		radial-gradient(55vmax 55vmax at 110% 110%, rgba(212, 175, 55, 0.18), transparent 60%), var(--bg);
-	/* Three organic gem cuts (round brilliant, pear, marquise) very faint on
-	   dark — occasional faint glints, not a texture. The rectangular emerald cut
-	   was dropped: its straight edges read as visible blocks at tile seams. */
+	/* The same four gem cuts (round brilliant, pear, marquise, emerald step-cut)
+	   very faint on dark — occasional faint glints, not a texture. */
 	--gem-watermark:
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.03' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M25 35 L40 20 L60 20 L75 35 L50 78 Z'/%3E%3Cpath d='M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78'/%3E%3C/g%3E%3C/svg%3E"),
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.024' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 18 C66 18 76 32 76 46 C76 62 63 78 50 84 C37 78 24 62 24 46 C24 32 34 18 50 18 Z'/%3E%3Cpath d='M30 44 L70 44 M50 18 L50 84'/%3E%3C/g%3E%3C/svg%3E"),
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.026' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 16 C64 30 74 44 74 56 C74 72 63 84 50 84 C37 84 26 72 26 56 C26 44 36 30 50 16 Z'/%3E%3Cpath d='M28 54 L72 54'/%3E%3C/g%3E%3C/svg%3E");
-	--gem-watermark-size: 240px 240px, 520px 520px, 360px 360px;
-	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%;
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.024' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-12 50 50)'%3E%3Cpath d='M50 14 C68 14 78 28 78 44 C78 62 64 80 50 86 C36 80 22 62 22 44 C22 28 32 14 50 14 Z'/%3E%3Cpath d='M22 44 L78 44'/%3E%3Cpath d='M50 14 L50 44 M35 18 L41 44 M65 18 L59 44'/%3E%3Cpath d='M22 44 L50 86 M41 44 L50 86 M59 44 L50 86 M78 44 L50 86'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.026' stroke-width='1.6' stroke-linejoin='round' transform='rotate(24 50 50)'%3E%3Cpath d='M50 12 C66 26 76 40 76 54 C76 72 64 88 50 88 C36 88 24 72 24 54 C24 40 34 26 50 12 Z'/%3E%3Cpath d='M24 54 L76 54'/%3E%3Cpath d='M50 12 L50 88 M24 54 L50 88 M76 54 L50 88 M24 54 L50 12 M76 54 L50 12'/%3E%3C/g%3E%3C/svg%3E"),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='440' height='440' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e8e6e0' stroke-opacity='0.024' stroke-width='1.6' stroke-linejoin='round' transform='rotate(-18 50 50)'%3E%3Cpath d='M36 14 L64 14 L82 32 L82 68 L64 86 L36 86 L18 68 L18 32 Z'/%3E%3Cpath d='M42 24 L58 24 L72 38 L72 62 L58 76 L42 76 L28 62 L28 38 Z'/%3E%3Cpath d='M46 34 L54 34 L62 42 L62 58 L54 66 L46 66 L38 58 L38 42 Z'/%3E%3Cpath d='M36 14 L42 24 M64 14 L58 24 M82 32 L72 38 M82 68 L72 62 M64 86 L58 76 M36 86 L42 76 M18 68 L28 62 M18 32 L28 38'/%3E%3C/g%3E%3C/svg%3E");
+	--gem-watermark-size: 240px 240px, 520px 520px, 360px 360px, 440px 440px;
+	--gem-watermark-position: 4% 8%, 42% 92%, 82% 40%, 22% 62%;
 }
 
 /* Slightly larger pieces on large screens (the two-column layout fills the
