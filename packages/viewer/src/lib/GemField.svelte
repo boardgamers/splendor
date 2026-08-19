@@ -33,15 +33,12 @@
 
 <svg class="gem-field" viewBox="0 0 1700 950" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
 	<defs>
-		<!-- Round brilliant, top view: octagonal girdle, octagonal table, and the
-		     radiating bezel/star facets that make it read as faceted. -->
+		<!-- Classic diamond, side view: flat crown, girdle line, and pointed
+		     pavilion with facet lines — the instantly recognizable gem shape. -->
 		<symbol id="brilliant" viewBox="0 0 100 100" overflow="visible">
 			<g>
-				<path d="M50 8 L80 20 L92 50 L80 80 L50 92 L20 80 L8 50 L20 20 Z" />
-				<path d="M50 30 L64 36 L70 50 L64 64 L50 70 L36 64 L30 50 L36 36 Z" />
-				<path
-					d="M50 8 L50 30 M80 20 L64 36 M92 50 L70 50 M80 80 L64 64 M50 92 L50 70 M20 80 L36 64 M8 50 L30 50 M20 20 L36 36"
-				/>
+				<path d="M25 35 L40 20 L60 20 L75 35 L50 78 Z" />
+				<path d="M25 35 L75 35 M40 20 L46 35 L50 78 M60 20 L54 35 L50 78" />
 			</g>
 		</symbol>
 		<!-- Cushion cut: rounded-square girdle, square table, radiating facets to
