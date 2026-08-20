@@ -1,4 +1,4 @@
-import { setup, applyMove, availableMoves, type GameState, type Move } from "splendor-engine";
+import { setup, applyMove, availableMoves, type GameState, type GemColor, type Move } from "splendor-engine";
 import { stripSecret } from "splendor-engine/wrapper.js";
 
 export interface DevOptions {
@@ -38,6 +38,10 @@ function parseMove(encoded: string): Move {
 			return { action: "reserve", tier: Number(rest) as 1 };
 		case "buy":
 			return { action: "buy", cardId: Number(rest) };
+		case "swap": {
+			const [give, receive] = rest.split(",") as [GemColor, GemColor];
+			return { action: "swap", give, receive };
+		}
 		case "noble":
 			return { action: "noble", nobleId: Number(rest) };
 		default:
