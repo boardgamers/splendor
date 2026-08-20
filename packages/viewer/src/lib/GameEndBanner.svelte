@@ -42,7 +42,7 @@
 
 <style>
 	.banner {
-		background: linear-gradient(160deg, #2c2416, #211a0e);
+		background: var(--banner-bg);
 		border: 1px solid var(--gold);
 		border-radius: var(--radius);
 		padding: 16px 20px;

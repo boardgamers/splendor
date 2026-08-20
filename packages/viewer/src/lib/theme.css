@@ -11,6 +11,8 @@
 	--gold-soft: rgba(184, 145, 42, 0.4);
 	--noble-bg: linear-gradient(155deg, #f3ead3, #e7d9b8 60%, #dcc9a0);
 	--noble-text: #4a3a1a;
+	/* End-game banner: a warm gold celebration panel, parchment-toned on light. */
+	--banner-bg: linear-gradient(160deg, #f7ecd0, #efdcb0 65%, #e6cd92);
 	/* Decorative "table felt" background: jewel-tone glows over a warm light
 	   base. Light mode needs fairly high opacity for the color to register over a
 	   bright base — strong enough to see, soft enough that panels stay readable. */
@@ -48,6 +50,8 @@ html.dark {
 	--gold-soft: rgba(212, 175, 55, 0.35);
 	--noble-bg: linear-gradient(155deg, #3a2f1d, #2a2114 60%, #1d170c);
 	--noble-text: #e8e6e0;
+	/* Dark: the deep bronze celebration panel. */
+	--banner-bg: linear-gradient(160deg, #2c2416, #211a0e);
 	/* Deep jewel glows over a near-black base, with a dark vignette pulling the
 	   edges down so the table reads as a lit pool in the middle. */
 	--bg-decor:
