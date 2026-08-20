@@ -6,9 +6,10 @@ const players = Math.min(4, Math.max(2, Number(params.get("players") ?? 2)));
 const seed = params.get("seed") ?? undefined;
 const hideReserved = params.get("hideReserved") === "1" || params.get("hideReserved") === "true";
 const auto = params.get("auto") === "1" || params.get("auto") === "true";
+const delayMs = params.get("delay") ? Number(params.get("delay")) : undefined;
 
 const emitter = launch("#app");
-startDevBackend(emitter as never, { players, seed, hideReserved, auto });
+startDevBackend(emitter as never, { players, seed, hideReserved, auto, delayMs });
 
 // Dev-harness theme control: default to the system theme, and add a small
 // toggle button that re-emits "theme" on the emitter exactly like the BGS shim
