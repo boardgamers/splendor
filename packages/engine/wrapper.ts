@@ -138,3 +138,14 @@ export function cancelled(data: GameState): boolean {
 export function factions(data: GameState): string[] {
 	return data.players.map((p) => p.name);
 }
+
+export function createAnalysis(data: GameState, { to }: { to: number; sourceEnded: boolean }): GameState {
+	if (!Number.isInteger(to) || to < 0 || to > data.log.length) {
+		throw new Error("Invalid history position");
+	}
+	const copy = replayCore({ ...data, log: data.log.slice(0, to) });
+	for (const player of copy.players) {
+		player.dropped = false;
+	}
+	return copy;
+}
