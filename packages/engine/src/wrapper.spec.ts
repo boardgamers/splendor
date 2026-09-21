@@ -191,3 +191,17 @@ function parseMove(encoded: string): Move {
 			throw new Error(`cannot parse ${encoded}`);
 	}
 }
+
+it("analysis positions use log boundaries and remain playable without changing the source", async () => {
+	const { createAnalysis } = await import("../wrapper.js");
+	const source = await fresh(3);
+	await move(source, TAKE, 0);
+	await move(source, { action: "take2", color: "sapphire" }, 1);
+	const original = structuredClone(source);
+	const copy = createAnalysis(source, { to: 2, sourceEnded: true });
+	assert.equal(copy.moveCount, 1);
+	assert.equal(copy.log.length, 2);
+	assert.equal(currentPlayer(copy), 1);
+	await move(copy, { action: "reserve", tier: 2 }, 1);
+	assert.deepEqual(source, original);
+});
