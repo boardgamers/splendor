@@ -2,6 +2,10 @@
 
 An **unofficial, open-source fan implementation** of the board game **Splendor** (base game, 2–4 players, no expansions) for the [boardgamers.space](https://boardgamers.space) platform. Splendor is a trademark of Space Cowboys / Asmodee; this project is not affiliated with or endorsed by the publisher. Gem colors, card costs and noble requirements are functional game rules data reproduced for interoperability.
 
+## Play online at
+
+[boardgamers.space](https://boardgamers.space)
+
 ## Rules & data sources
 
 The game rules and the card/noble data are **not** re-derived by this project — they reproduce the published base game:
