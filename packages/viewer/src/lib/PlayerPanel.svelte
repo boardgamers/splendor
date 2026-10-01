@@ -22,6 +22,12 @@
 	const bonusList = $derived(GEM_COLORS.map((c) => ({ color: c, n: bonus[c] })).filter((x) => x.n > 0));
 	const bonusOf = (color: (typeof GEM_COLORS)[number]) => bonus[color];
 	const avatar = $derived(store.avatars[index]);
+	const appearance = $derived(
+		store.preferences.bgs as
+			| { players?: { pro?: boolean }[]; supporterBadge?: { url: string; label: string } }
+			| undefined
+	);
+	const badge = $derived(appearance?.players?.[index]?.pro ? appearance.supporterBadge : undefined);
 	const initial = $derived((player.name.trim()[0] ?? "?").toUpperCase());
 
 	function ordinal(i: number): string {
@@ -40,11 +46,14 @@
 	<div class="head">
 		<button class="identity" onclick={() => onNameClick?.(index)} title={player.name}>
 			<span class="order" title="turn order — plays {index + 1}{ordinal(index)}">{index + 1}</span>
-			{#if avatar}
-				<img class="avatar" src={avatar} alt="" referrerpolicy="no-referrer" />
-			{:else}
-				<span class="avatar fallback" style="--pc: {playerColor(index)}">{initial}</span>
-			{/if}
+			<span class="portrait">
+				{#if avatar}
+					<img class="avatar" src={avatar} alt="" referrerpolicy="no-referrer" />
+				{:else}
+					<span class="avatar fallback" style="--pc: {playerColor(index)}">{initial}</span>
+				{/if}
+				{#if badge}<img class="supporter-badge" src={badge.url} alt={badge.label} title={badge.label} />{/if}
+			</span>
 			<span class="name">{player.name}</span>
 			{#if index === state.lastPlayer && !state.ended}
 				<span
@@ -157,6 +166,18 @@
 	}
 	.identity:hover .name {
 		color: var(--gold);
+	}
+	.portrait {
+		position: relative;
+		display: inline-flex;
+		flex-shrink: 0;
+	}
+	.supporter-badge {
+		position: absolute;
+		top: -3px;
+		left: -3px;
+		width: 14px;
+		height: 14px;
 	}
 	.avatar {
 		width: 30px;
