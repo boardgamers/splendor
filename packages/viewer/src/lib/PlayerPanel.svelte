@@ -24,8 +24,13 @@
 	const avatar = $derived(store.avatars[index]);
 	const appearance = $derived(
 		store.preferences.bgs as
-			| { players?: { pro?: boolean }[]; supporterBadge?: { url: string; label: string } }
+			| { playerColors?: string[]; players?: { pro?: boolean }[]; supporterBadge?: { url: string; label: string } }
 			| undefined
+	);
+	const color = $derived(
+		appearance?.playerColors?.[index] && /^#[a-f0-9]{6}$/i.test(appearance.playerColors[index]!)
+			? appearance.playerColors[index]!
+			: playerColor(index)
 	);
 	const badge = $derived(appearance?.players?.[index]?.pro ? appearance.supporterBadge : undefined);
 	const initial = $derived((player.name.trim()[0] ?? "?").toUpperCase());
@@ -36,13 +41,7 @@
 	}
 </script>
 
-<div
-	class="panel"
-	class:current={isCurrent}
-	class:dropped={player.dropped}
-	class:me={isMe}
-	style="--pc: {playerColor(index)}"
->
+<div class="panel" class:current={isCurrent} class:dropped={player.dropped} class:me={isMe} style="--pc: {color}">
 	<div class="head">
 		<button class="identity" onclick={() => onNameClick?.(index)} title={player.name}>
 			<span class="order" title="turn order — plays {index + 1}{ordinal(index)}">{index + 1}</span>
@@ -50,7 +49,7 @@
 				{#if avatar}
 					<img class="avatar" src={avatar} alt="" referrerpolicy="no-referrer" />
 				{:else}
-					<span class="avatar fallback" style="--pc: {playerColor(index)}">{initial}</span>
+					<span class="avatar fallback" style="--pc: {color}">{initial}</span>
 				{/if}
 				{#if badge}<img class="supporter-badge" src={badge.url} alt={badge.label} title={badge.label} />{/if}
 			</span>
