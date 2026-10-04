@@ -9,7 +9,7 @@
 		"dev": "pnpm --filter splendor-viewer dev",
 		"build": "pnpm --filter splendor-engine build && pnpm --filter splendor-viewer build",
 		"test": "pnpm --filter splendor-engine test",
-		"tsc": "pnpm --filter splendor-engine tsc && pnpm --filter splendor-viewer tsc",
+		"tsc": "pnpm --filter splendor-engine tsc && pnpm --filter splendor-engine build && pnpm --filter splendor-viewer tsc",
 		"fmt": "oxfmt",
 		"fmt:check": "oxfmt --check",
 		"lint": "oxlint",
